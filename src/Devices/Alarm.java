@@ -1,5 +1,4 @@
 package Devices;
-//Testing
 
 public class Alarm {
     private boolean isBeeping;
