@@ -11,7 +11,7 @@ public class CoffeeMachine extends Device {
     public CoffeeMachine(double amount, LocalTime makeTime, String flavour) {}
 
     // Inherited methods
-    public String Check() { return "good"; }
+    public STATES Check() { return STATES.GOOD; }
     
     // Start coffee machine with specified stats
     public boolean Start() { return true; }

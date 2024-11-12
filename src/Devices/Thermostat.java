@@ -7,7 +7,7 @@ public class Thermostat extends Device {
     public Thermostat(char curUnit, double targetHumid, double targetTemp) {}
 
     // Inherited methods
-    public String Check() { return "good"; }
+    public STATES Check() { return STATES.GOOD; }
     
     // Setters
     public boolean SetUnit(char newUnit) { return true; }
