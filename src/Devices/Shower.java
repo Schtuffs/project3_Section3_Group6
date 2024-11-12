@@ -8,7 +8,7 @@ public class Shower extends Device {
     public Shower(double temperature, String headPattern) {}
 
     // Inherited methods
-    public String Check() { return "good"; }
+    public STATES Check() { return STATES.GOOD; }
 
     // Allows remote start/stop
     public boolean Start() { return true; }

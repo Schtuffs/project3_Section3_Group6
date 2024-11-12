@@ -6,7 +6,7 @@ public class Camera extends Device {
     public Camera(boolean state) {}
 
     // Inherited methods
-    public String Check() { return "good"; }
+    public STATES Check() { return STATES.GOOD; }
     
     // Allows activation and deactivation of camera
     public boolean Start() { return true; }

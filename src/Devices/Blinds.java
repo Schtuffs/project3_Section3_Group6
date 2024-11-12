@@ -9,7 +9,7 @@ public class Blinds extends Device {
     public Blinds(LocalTime oTime, LocalTime cTime) {}
     
     // Inherited methods
-    public String Check() { return "good"; }
+    public STATES Check() { return STATES.GOOD; }
     
     // Allows remote control of blinds
     public boolean Open() { return true; }

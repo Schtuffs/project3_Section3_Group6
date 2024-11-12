@@ -6,5 +6,5 @@ public class SmokeDetector extends Device {
     public SmokeDetector() {}
 
     // Inherited methods
-    public String Check() { return "good"; }
+    public STATES Check() { return STATES.GOOD; }
 }

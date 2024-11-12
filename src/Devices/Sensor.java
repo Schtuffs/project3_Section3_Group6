@@ -9,5 +9,5 @@ public class Sensor extends Device {
     public Sensor() {}
 
     // Inherited methods
-    public String Check() { return "good"; }
+    public STATES Check() { return STATES.GOOD; }
 }
