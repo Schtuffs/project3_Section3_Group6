@@ -1,6 +1,7 @@
 package Devices;
 
 import java.time.LocalTime;
+import static java.time.temporal.ChronoUnit.NANOS;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ public class CoffeeMachine extends Device {
     
     // Make time is the time set by user
     private LocalTime userMakeTime;
-    // Actual time the coffee needs to begin brewing at to be ready for user selected time
+    // Actual time the coffee needs to begin brewing at to be ready for user selected make time
     private LocalTime actualMakeTime;
     // Amount of time left in current brew cycle
     private LocalTime brewTimeLeft;
@@ -34,12 +35,13 @@ public class CoffeeMachine extends Device {
     private Map<String, LocalTime> brewTimes;
 
     public CoffeeMachine(LocalTime makeTime, String flavour, String[] everyFlavour, double[] totalBeans) {
-        // Simple allocations
+        // Simple allocations and sets
         this.isOn = false;
         
         // Setup maps
         this.beanBrewCost = new HashMap<>();
         this.brewTimes = new HashMap<>();
+        this.beansRemaining = new HashMap<>();
 
         // Initialize flavours
         this.allFlavours = new ArrayList<>();
@@ -99,7 +101,6 @@ public class CoffeeMachine extends Device {
         }
 
         // Prepare bean counts
-        this.beansRemaining = new HashMap<>();
         for (int i = 0; i < this.allFlavours.size(); i++) {
             // Add bean count
             if (i < totalBeans.length) {
@@ -115,6 +116,7 @@ public class CoffeeMachine extends Device {
 
         // Remove nano seconds for future calculations
         makeTime = makeTime.minusNanos(makeTime.getNano());
+
         this.userMakeTime = makeTime;
         makeTime = makeTime.minusHours(this.brewTimes.get(this.selectedFlavour).getHour());
         makeTime = makeTime.minusMinutes(this.brewTimes.get(this.selectedFlavour).getMinute());
@@ -123,50 +125,62 @@ public class CoffeeMachine extends Device {
 
     // Inherited methods
     public STATES Check() {
-        STATES state = STATES.GOOD;
-
         // Check if coffee machine should start
         LocalTime current = LocalTime.now();
-        if (current.equals(this.actualMakeTime) || !this.isOn) {
+        current = current.minusNanos(current.getNano());
+        // Check make time to current time and that machine is not already on
+        if (current.equals(this.actualMakeTime) && !this.isOn) {
             // If not on, turn on
             if (!this.isOn) {
-                state = this.Start();
-                state = STATES.ERROR_NO_BEANS;
+                return this.Start();
             }
             
         }
-        // Otherwise, decrease brewing time
+        // Otherwise, check for decreasing brewing time or stopping machine
         else {
-            LocalTime tmp = this.brewTimeLeft.minusNanos(current.getNano() - this.timeOfLastCheck.getNano());
-            if (tmp.getNano() < 0) {
-                System.out.println(tmp.getNano());
+            // Machine must be on to reduce time
+            if (this.isOn) {
+                // Reduce time based on how much has passed since last check
+                this.brewTimeLeft = this.brewTimeLeft.minusNanos(NANOS.between(this.timeOfLastCheck, current));
+                this.timeOfLastCheck = current;
+
+                // Finally, check if runtime is done by checking if the hour wrapped around
+                if (this.brewTimeLeft.getHour() == 23) {
+                    return this.Stop();
+                }
             }
-            this.timeOfLastCheck = current;
-            System.out.println(this.brewTimeLeft);
         }
 
-        return state;
+        return STATES.GOOD;
     }
     
     // Start coffee machine with specified stats
     private STATES Start() {
-        STATES state = STATES.GOOD;
+        // Check for bean count
+        double beansLeft = this.beansRemaining.get(this.selectedFlavour) - this.beanBrewCost.get(this.selectedFlavour);
+        if (beansLeft >= 0) {
+            // Remove beans for brewing
+            this.beansRemaining.replace(this.selectedFlavour, beansLeft);
+        }
+        else {
+            return STATES.ERROR_NO_BEANS;
+        }
 
         // Finally, turn on coffee machine if everything is setup properly
-        if (state == STATES.GOOD) {
-            // Setup brewtime
-            this.brewTimeLeft = this.brewTimes.get(this.selectedFlavour);
-            // This allows for the reduction of brew time
-            this.timeOfLastCheck = LocalTime.now();
-            this.isOn = true;
-        }
+
+        // Setup brewtime
+        this.brewTimeLeft = this.brewTimes.get(this.selectedFlavour);
+        // This allows for the reduction of brew time
+        this.timeOfLastCheck = LocalTime.now();
+        this.isOn = true;
         
-        return state;
+        return STATES.GOOD;
     }
 
     // Turns off the coffee machine
     private STATES Stop() {
-        STATES state = STATES.GOOD;
-        return state;
+        this.isOn = false;
+
+        return STATES.GOOD;
     }
 }
