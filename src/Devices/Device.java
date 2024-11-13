@@ -1,7 +1,7 @@
 package Devices;
 public abstract class Device {
     protected int type, Id;
-    protected enum STATES {
+    public enum STATES {
         GOOD,
         // Alarm, Camera, CoffeeMachine, Shower
         ERROR_NO_START, ERROR_NO_STOP,
