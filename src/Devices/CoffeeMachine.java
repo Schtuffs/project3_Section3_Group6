@@ -154,6 +154,38 @@ public class CoffeeMachine extends Device {
         return STATES.GOOD;
     }
     
+    public boolean Set(COMMAND_SET param, String value) {
+        return true;
+    }
+
+    public String Get(COMMAND_GET param) {
+        return "";
+    }
+
+    public String Call(COMMAND_CALL param, String args) {
+        // Default good
+        STATES state = STATES.GOOD;
+
+        // Start machine on request
+        if (param == COMMAND_CALL.START) {
+            state = this.Start();
+        }
+
+        // Stop machine on request
+        else if (param == COMMAND_CALL.STOP) {
+            state = this.Stop();
+        }
+
+        // Command invalid
+        else {
+            state = STATES.ERROR_UNKNOWN;
+        }
+
+        return state.toString();
+    }
+
+    // CoffeeMachine specific functions
+    
     // Start coffee machine with specified stats
     private STATES Start() {
         // Check for bean count

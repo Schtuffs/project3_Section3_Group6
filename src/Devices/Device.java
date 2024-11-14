@@ -19,10 +19,32 @@ public abstract class Device {
         ERROR_INVALID_UNIT,
         // All
         ERROR_PARSE, ERROR_UNKNOWN
-    };
+    }
+
+    public enum COMMAND_SET {
+
+    }
+
+    public enum COMMAND_GET {
+
+    }
+
+    public enum COMMAND_CALL {
+        // All
+        START, STOP
+    }
 
     // Checks device is satisfied with current conditions
     // Ex. Windows are closed between close time and open time
     // Ex. Smoke detector detects no smoke
     abstract public STATES Check();
+
+    // Sets value for object based on command param
+    abstract public boolean Set(COMMAND_SET param, String value);
+
+    // Gets variable value from device based on command param
+    abstract public String Get(COMMAND_GET param);
+
+    // Calls function from object based on command param, optional arguments to pass to function
+    abstract public String Call(COMMAND_CALL param, String args);
 }
