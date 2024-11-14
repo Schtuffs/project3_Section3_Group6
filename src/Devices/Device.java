@@ -3,6 +3,8 @@ public abstract class Device {
     protected int type, Id;
     protected enum STATES {
         GOOD,
+        // Smoke detector
+        SMOKE_DETECTED,
         // Alarm, Camera, CoffeeMachine, Shower
         ERROR_NO_START, ERROR_NO_STOP,
         // Alarm
