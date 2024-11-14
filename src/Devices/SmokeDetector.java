@@ -12,9 +12,11 @@ public class SmokeDetector extends Device {
     public STATES Check() { 
         
         // if smoke. return AHHH GET OUT GET OUT THERES SMOKE AHHHHH
-        if ( isSmokey) return STATES.SMOKE_DETECTED;
+        if (isSmokey) return STATES.SMOKE_DETECTED;
 
         // otherwise no smoke
         return STATES.GOOD; 
     }
+
+    // likely there needs to be logic to randomly turn isSmokey true for "fires"
 }

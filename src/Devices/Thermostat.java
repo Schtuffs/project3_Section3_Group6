@@ -17,8 +17,18 @@ public class Thermostat extends Device {
     }
 
     // Inherited methods
-    public STATES Check() { 
-        return STATES.GOOD; 
+    public STATES Check() {
+        
+        // if the temperature matches the target temperature, return good
+        if ( targetTemperature == this.temperature ) return STATES.GOOD;
+
+        // if the humidity matches the target humidity, return good
+        if ( targetHumidity == this.humidity ) return STATES.GOOD;
+
+
+        // todo: if UI button for unit change matches the current unit selected, return STATES.GOOD
+
+        return STATES.ERROR_UNKNOWN; 
     }
     
     // Change the unit of measurement for temperature
