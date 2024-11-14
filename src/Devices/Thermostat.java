@@ -50,7 +50,7 @@ public class Thermostat extends Device {
         }
 
         // otherwise, the unit change has failed, return false
-        return STATES.ERROR_UNKNOWN;
+        return STATES.ERROR_INVALID_UNIT;
     }
 
 
