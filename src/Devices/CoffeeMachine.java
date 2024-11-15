@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+// The Bean Machine
 public class CoffeeMachine extends Device {
     // State of device
     private boolean isOn;
@@ -20,6 +21,8 @@ public class CoffeeMachine extends Device {
     private LocalTime brewTimeLeft;
     // Time of last check for reducing brew time
     private LocalTime timeOfLastCheck;
+    // Days to automatically brew coffee
+    private boolean[] makeDays;
 
     // Coffee bean variables
     
@@ -34,9 +37,13 @@ public class CoffeeMachine extends Device {
     // How long each coffee type takes to brew
     private Map<String, LocalTime> brewTimes;
 
-    public CoffeeMachine(LocalTime makeTime, String flavour, String[] everyFlavour, double[] totalBeans) {
+    public CoffeeMachine() {
         // Simple allocations and sets
         this.isOn = false;
+        this.makeDays = new boolean[7];
+        for (int i = 0; i < makeDays.length; i++) {
+            makeDays[i] = true;
+        }
         
         // Setup maps
         this.beanBrewCost = new HashMap<>();
@@ -45,9 +52,6 @@ public class CoffeeMachine extends Device {
 
         // Initialize flavours
         this.allFlavours = new ArrayList<>();
-        for (int i = 0; i < everyFlavour.length; i++) {
-            this.allFlavours.add(everyFlavour[i]);
-        }
 
         // Will be moved to file later
         this.allFlavours.add("espresso");
@@ -55,24 +59,8 @@ public class CoffeeMachine extends Device {
         this.allFlavours.add("cappuccino");
         this.allFlavours.add("mocha");
         this.allFlavours.add("americano");
-        // Add flavours to object, all lowercase
-        for (String flav : everyFlavour) {
-            this.allFlavours.add(flav.toLowerCase());
-        }
-
-        // Check if selected flavour is valid
-        boolean inFlavours = false;
-        for (String flav : this.allFlavours) {
-            if (flavour.equalsIgnoreCase(flav)) {
-                inFlavours = true;
-                this.selectedFlavour = flavour.toLowerCase();
-                break;
-            }
-        }
-        // Auto set flavour to first in flavours list if invalid type is entered
-        if (!inFlavours) {
-            this.selectedFlavour = this.allFlavours.get(0);
-        }
+        
+        this.selectedFlavour = this.allFlavours.get(0);
 
         // Preparing coffee bean cost
         double[] totals = { 0.4, 1.0, 1.0, 0.7, 0.4 };
@@ -102,23 +90,15 @@ public class CoffeeMachine extends Device {
 
         // Prepare bean counts
         for (int i = 0; i < this.allFlavours.size(); i++) {
-            // Add bean count
-            if (i < totalBeans.length) {
-                this.beansRemaining.put(this.allFlavours.get(i), totalBeans[i]);
-            }
-            // Otherwise, assume no beans
-            else {
-                this.beansRemaining.put(this.allFlavours.get(i), 0.);
-            }
+            // Assume no beans
+            this.beansRemaining.put(this.allFlavours.get(i), 0.);
         }
 
         // Finally, init actualmaketime based on chosen flavour and maketime from user inputted time
 
         // Remove nano seconds for future calculations
-        makeTime = makeTime.minusNanos(makeTime.getNano());
-
-        this.userMakeTime = makeTime;
-        makeTime = makeTime.minusHours(this.brewTimes.get(this.selectedFlavour).getHour());
+        this.userMakeTime = LocalTime.parse("08:00:00");
+        LocalTime makeTime = this.userMakeTime.minusHours(this.brewTimes.get(this.selectedFlavour).getHour());
         makeTime = makeTime.minusMinutes(this.brewTimes.get(this.selectedFlavour).getMinute());
         this.actualMakeTime = makeTime.minusSeconds(this.brewTimes.get(this.selectedFlavour).getSecond());
     }
@@ -155,30 +135,87 @@ public class CoffeeMachine extends Device {
     }
     
     public boolean Set(COMMAND_SET param, String value) {
-        return true;
+        switch (param) {
+        case COMMAND_SET.BEAN_FLAVOUR:
+            return this.SetBeanFlavour(value);
+        case COMMAND_SET.BEAN_ADD:
+            return this.SetBeansLeft(value);
+        case COMMAND_SET.BEAN_NEW:
+            return this.SetNewBean(value);
+        default:
+            return false;
+        }
+    }
+
+    private boolean SetBeanFlavour(String newFlavour) {
+        for(String flav : this.allFlavours) {
+            if (newFlavour.equalsIgnoreCase(flav)) {
+                this.selectedFlavour = newFlavour.toLowerCase();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean SetBeansLeft(String addBeanCount) {
+        double beans;
+        try {
+            beans = Double.parseDouble(addBeanCount);
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+
+        if (beans > 0) {
+            // Increase bean count by newly inputted value
+            this.beansRemaining.replace(this.selectedFlavour, this.beansRemaining.get(this.selectedFlavour) + beans);
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean SetNewBean(String value) {
+        return this.allFlavours.add(value);
     }
 
     public String Get(COMMAND_GET param) {
-        return "";
+        String result;
+        switch (param) {
+        case COMMAND_GET.BEAN_FLAVOUR:
+            result = this.selectedFlavour;
+            break;
+        case COMMAND_GET.BEAN_LEFT:
+            result = this.beansRemaining.get(this.selectedFlavour).toString();
+            break;
+        case COMMAND_GET.BEAN_BREWTIME:
+            result = this.brewTimes.get(this.selectedFlavour).toString();
+            break;
+        case COMMAND_GET.BEAN_BREWTIMELEFT:
+            result = this.brewTimeLeft.toString();
+            break;
+        case COMMAND_GET.BEAN_BREWCOST:
+            result = this.beanBrewCost.get(this.selectedFlavour).toString();
+            break;
+        default:
+            result = STATES.ERROR_UNKNOWN.toString();
+        }
+        return result;
     }
 
     public String Call(COMMAND_CALL param, String args) {
         // Default good
         STATES state = STATES.GOOD;
 
-        // Start machine on request
-        if (param == COMMAND_CALL.START) {
+        switch(param) {
+        case COMMAND_CALL.START:
             state = this.Start();
-        }
-
-        // Stop machine on request
-        else if (param == COMMAND_CALL.STOP) {
+            break;
+        case COMMAND_CALL.STOP:
             state = this.Stop();
-        }
-
-        // Command invalid
-        else {
+            break;
+        default:
             state = STATES.ERROR_UNKNOWN;
+            break;
         }
 
         return state.toString();

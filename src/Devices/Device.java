@@ -22,11 +22,21 @@ public abstract class Device {
     }
 
     public enum COMMAND_SET {
-
+        // Coffee Machine, bean related
+        BEAN_FLAVOUR, BEAN_NEW, BEAN_ADD, BEAN_BREWTIME, BEAN_DAYS,
+        // Shower
+        SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+        // All
+        UNKNOWN
     }
 
     public enum COMMAND_GET {
-
+        // Coffee Machine, bean related
+        BEAN_FLAVOUR, BEAN_LEFT, BEAN_BREWTIME, BEAN_BREWTIMELEFT, BEAN_BREWCOST, BEAN_DAYS,
+        // Shower
+        SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+        // All
+        UNKNOWN
     }
 
     public enum COMMAND_CALL {
