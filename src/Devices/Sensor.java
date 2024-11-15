@@ -15,6 +15,7 @@ public class Sensor extends Device {
         this.isDismissed = false;
         this.openTime = LocalTime.parse("06:00:00");
         this.closeTime = LocalTime.parse("18:00:00");
+        this.type = DEVICE_TYPE.SENSOR;
 
     }
 
@@ -26,13 +27,20 @@ public class Sensor extends Device {
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.alarm = alarm;
+        this.type = DEVICE_TYPE.SENSOR;
 
     }
 
     public boolean readDataFromFile(String line) {
 
+        // get current object variable values
+        LocalTime o_openTime = this.openTime;
+        LocalTime o_closeTime = this.closeTime;
+        boolean o_isOpen = this.isOpen;
+        boolean o_isDismissed = this.isDismissed;
+
         // Split values from comma seperated values from line
-        String[] values = line.Split(",");
+        String[] values = line.split(",");
 
         // return false if incorrect amount of values are given 
         if (values.length!=4) {
@@ -47,6 +55,13 @@ public class Sensor extends Device {
             this.isOpen = true;
         }
         else {
+
+            // reset variables
+            this.openTime = o_openTime;
+            this.closeTime = o_closeTime;
+            this.isOpen = o_isOpen;
+            this.isDismissed = o_isDismissed;
+
             return false;
         }
 
@@ -58,14 +73,45 @@ public class Sensor extends Device {
             this.isDismissed = true;
         }
         else {
+
+            // reset variables
+            this.openTime = o_openTime;
+            this.closeTime = o_closeTime;
+            this.isOpen = o_isOpen;
+            this.isDismissed = o_isDismissed;
+
             return false;
         }
 
         // set open time value
-        this.openTime = LocalTime.parse(values[2]);
+        try {
+            this.openTime = LocalTime.parse(values[2]);
+        }
+        catch (Exception parseError) {
+
+            // reset variables
+            this.openTime = o_openTime;
+            this.closeTime = o_closeTime;
+            this.isOpen = o_isOpen;
+            this.isDismissed = o_isDismissed;
+
+            return false;
+        }
 
         // set close time value
-        this.closeTime = LocalTime.parse(values[3]);
+        try {
+            this.closeTime = LocalTime.parse(values[3]);
+        }
+        catch (Exception parseError) {
+
+            // reset variables
+            this.openTime = o_openTime;
+            this.closeTime = o_closeTime;
+            this.isOpen = o_isOpen;
+            this.isDismissed = o_isDismissed;
+            
+            return false;
+        }
 
         return true;
         
@@ -86,10 +132,8 @@ public class Sensor extends Device {
             alarm.triggerAlarm();
         }
         */
+        return false;
     }
-
-     // Inherited methods
-     public STATES Check() { return STATES.GOOD; }
 
 
      // getters for variables
@@ -103,7 +147,7 @@ public class Sensor extends Device {
          return this.openTime;
      }
      public LocalTime GetCloseTime() {
-         return this.class;
+         return this.closeTime;
      }
 
      // setters for variables
@@ -120,5 +164,104 @@ public class Sensor extends Device {
         this.closeTime = closeTime;
     }
 
+
+     // Inherited methods
+
+    public STATES Check() {
+        return STATES.GOOD;
+    }
+
+    // Sets value for object based on command param
+    // SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR__OPEN_TIME
+    public boolean Set(COMMAND_SET param, String value) {
+
+        if (param==COMMAND_SET.SENSOR_IS_OPEN) {
+
+            // set isbeeping to false if false passed in
+            if (value.toLowerCase().equals("false") || value.equals("0")) {
+                this.SetIsOpen(false);
+                return true;
+            }
+
+            // set value to true if true passed in
+            else if (value.toLowerCase().equals("true") || value.equals("1")) {
+                this.SetIsOpen(true);
+                return true;
+            }
+        }
+
+        else if (param==COMMAND_SET.SENSOR_IS_DISMISSED) {
+
+            // set isbeeping to false if false passed in
+            if (value.toLowerCase().equals("false") || value.equals("0")) {
+                this.SetIsDismissed(false);
+                return true;
+            }
+
+            // set value to true if true passed in
+            else if (value.toLowerCase().equals("true") || value.equals("1")) {
+                this.SetIsDismissed(true);
+                return true;
+            }
+        }
+
+        else if (param==COMMAND_SET.SENSOR_OPEN_TIME) {
+            try {
+                SetOpenTime(LocalTime.parse(value));
+                return true;
+            }
+            catch (Exception parseError) {
+                return false;
+            }
+        }
+
+        else if (param==COMMAND_SET.SENSOR_CLOSE_TIME) {
+            try {
+                SetCloseTime(LocalTime.parse(value));
+                return true;
+            }
+            catch (Exception parseError) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    // Gets variable value from device based on command param
+    public String Get(COMMAND_GET param) {
+
+        if (param==COMMAND_GET.SENSOR_IS_OPEN) {
+            if (isOpen) {
+                return "true";
+            } return "false";
+        }
+        else if (param==COMMAND_GET.SENSOR_IS_DISMISSED) {
+            if (isDismissed) {
+                return "true";
+            } return "false";
+        }
+        else if (param==COMMAND_GET.SENSOR_OPEN_TIME) {
+            return openTime+"";
+        }
+        else if (param==COMMAND_GET.SENSOR_CLOSE_TIME) {
+            return closeTime+"";
+        }
+
+
+        return null;
+
+    }
+
+    // Calls function from object based on command param, optional arguments to pass to function
+    public String Call(COMMAND_CALL param, String args) {
+
+        
+        if (param==COMMAND_CALL.READ_FROM_FILE) {
+            readDataFromFile(args);
+        }
+
+        return null;
+    }
 
 }

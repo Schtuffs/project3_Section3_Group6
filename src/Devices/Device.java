@@ -1,6 +1,6 @@
 package Devices;
 public abstract class Device {
-    protected int type, Id;
+    protected DEVICE_TYPE type, Id;
     protected enum STATES {
         GOOD,
         // Smoke detector
@@ -21,17 +21,38 @@ public abstract class Device {
         ERROR_PARSE, ERROR_UNKNOWN
     }
 
+    public enum DEVICE_TYPE {
+
+        // devices
+        ALARM, BLINDS, CAMERA, COFFEE_MACHINE, SENSOR, SHOWER, SMOKE_DETECTOR, THERMOSTAT
+
+    }
+
     public enum COMMAND_SET {
+
+        // Alarm variables
+        ALARM_IS_BEEPING, ALARM_BEEP_DELAY,
+
+        // Sensor variables
+        SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME
 
     }
 
     public enum COMMAND_GET {
 
+        // Alarm variables
+        ALARM_IS_BEEPING, ALARM_BEEP_DELAY,
+
+        // Sensor variables
+        SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME
     }
 
     public enum COMMAND_CALL {
         // All
-        START, STOP
+        START, STOP, READ_FROM_FILE,
+
+        // Alarm
+        BEEP
     }
 
     // Checks device is satisfied with current conditions
