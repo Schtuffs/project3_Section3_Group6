@@ -34,7 +34,14 @@ public abstract class Device {
         ALARM_IS_BEEPING, ALARM_BEEP_DELAY,
 
         // Sensor variables
-        SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME
+        SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME,
+          
+        // Coffee Machine, bean related
+        BEAN_FLAVOUR, BEAN_NEW, BEAN_ADD, BEAN_BREWTIME, BEAN_DAYS,
+        // Shower
+        SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+        // All
+        UNKNOWN
 
     }
 
@@ -44,7 +51,14 @@ public abstract class Device {
         ALARM_IS_BEEPING, ALARM_BEEP_DELAY,
 
         // Sensor variables
-        SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME
+        SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME,
+          
+        // Coffee Machine, bean related
+        BEAN_FLAVOUR, BEAN_LEFT, BEAN_BREWTIME, BEAN_BREWTIMELEFT, BEAN_BREWCOST, BEAN_DAYS,
+        // Shower
+        SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+        // All
+        UNKNOWN
     }
 
     public enum COMMAND_CALL {
