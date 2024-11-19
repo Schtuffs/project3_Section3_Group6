@@ -37,7 +37,7 @@ public abstract class Device {
         SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME,
           
         // Coffee Machine, bean related
-        BEAN_FLAVOUR, BEAN_NEW, BEAN_ADD, BEAN_BREWTIME, BEAN_DAYS,
+        BEAN_FLAVOUR, BEAN_NEW, BEAN_ADD, BEAN_MAKETIME, BEAN_DAYS,
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
         // All
@@ -54,7 +54,7 @@ public abstract class Device {
         SENSOR_IS_OPEN, SENSOR_IS_DISMISSED, SENSOR_CLOSE_TIME, SENSOR_OPEN_TIME,
           
         // Coffee Machine, bean related
-        BEAN_FLAVOUR, BEAN_LEFT, BEAN_BREWTIME, BEAN_BREWTIMELEFT, BEAN_BREWCOST, BEAN_DAYS,
+        BEAN_FLAVOUR, BEAN_LEFT, BEAN_BREWTIME, BEAN_MAKETIME, BEAN_BREWTIMELEFT, BEAN_BREWCOST, BEAN_DAYS,
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
         // All

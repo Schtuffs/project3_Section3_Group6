@@ -1,6 +1,8 @@
 package Devices;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+
 import static java.time.temporal.ChronoUnit.NANOS;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ public class CoffeeMachine extends Device {
     public CoffeeMachine() {
         // Simple allocations and sets
         this.isOn = false;
+        this.brewTimeLeft = LocalTime.parse("00:00:00");
         this.makeDays = new boolean[7];
         for (int i = 0; i < makeDays.length; i++) {
             makeDays[i] = true;
@@ -129,6 +132,16 @@ public class CoffeeMachine extends Device {
                     return this.Stop().toString();
                 }
             }
+            // See if machine should be running right now
+            else {
+                boolean inHour = (this.actualMakeTime.getHour() <= current.getHour() && current.getHour() <= this.userMakeTime.getHour());
+                boolean inMinute = (this.actualMakeTime.getMinute() <= current.getMinute() && current.getMinute() <= this.userMakeTime.getMinute());
+                boolean inSecond = (this.actualMakeTime.getSecond() <= current.getSecond() && current.getSecond() <= this.userMakeTime.getSecond());
+                if (inHour && inMinute && inSecond) {
+                    // Machine should be running but it is not
+                    return STATES.ERROR_NO_START.toString();
+                }
+            }
         }
 
         return STATES.GOOD.toString();
@@ -142,6 +155,10 @@ public class CoffeeMachine extends Device {
             return this.SetBeansLeft(value);
         case COMMAND_SET.BEAN_NEW:
             return this.SetNewBean(value);
+        case COMMAND_SET.BEAN_MAKETIME:
+            return this.SetBeanMakeTime(value);
+        case COMMAND_SET.BEAN_DAYS:
+            return this.SetNewDays(value);
         default:
             return false;
         }
@@ -178,7 +195,41 @@ public class CoffeeMachine extends Device {
         return this.allFlavours.add(value);
     }
 
-    private boolean SetNewDays(String day) {
+    private boolean SetBeanMakeTime(String time) {
+        // Try to change the user maketime
+        try {
+            LocalTime lt = LocalTime.parse(time);
+            this.userMakeTime = lt;
+        }
+        catch (DateTimeParseException e) {
+            return false;
+        }
+        // Change the actual make time as well
+        LocalTime makeTime = this.userMakeTime.minusHours(this.brewTimes.get(this.selectedFlavour).getHour());
+        makeTime = makeTime.minusMinutes(this.brewTimes.get(this.selectedFlavour).getMinute());
+        this.actualMakeTime = makeTime.minusSeconds(this.brewTimes.get(this.selectedFlavour).getSecond());
+        return true;
+    }
+    
+    private boolean SetNewDays(String days) {
+        // Setup map for days
+        Map<String, Integer> dMap = new HashMap<>();
+        dMap.put("Sunday", 0);
+        dMap.put("Monday", 1);
+        dMap.put("Tuesday", 2);
+        dMap.put("Wednesday", 3);
+        dMap.put("Thursday", 4);
+        dMap.put("Friday", 5);
+        dMap.put("Saturday", 6);
+        
+        // Split user string into separate days
+        String[] daysSplit = days.split(", ");
+        for (String day : daysSplit) {
+            if (dMap.containsKey(day)) {
+                int index = dMap.get(day);
+                this.makeDays[index] = !this.makeDays[index];
+            }
+        }
         return true;
     }
     
@@ -199,6 +250,9 @@ public class CoffeeMachine extends Device {
             break;
         case COMMAND_GET.BEAN_BREWCOST:
             result = this.beanBrewCost.get(this.selectedFlavour).toString();
+            break;
+        case COMMAND_GET.BEAN_MAKETIME:
+            result = this.userMakeTime.toString();
             break;
         case COMMAND_GET.BEAN_DAYS:
             return this.GetBrewDays();
@@ -246,6 +300,11 @@ public class CoffeeMachine extends Device {
     
     // Start coffee machine with specified stats
     private STATES Start() {
+        // If function is called by user after already being started
+        if (this.isOn) {
+            return STATES.ERROR_NO_START;
+        }
+
         // Check for bean count
         double beansLeft = this.beansRemaining.get(this.selectedFlavour) - this.beanBrewCost.get(this.selectedFlavour);
         if (beansLeft >= 0) {
@@ -269,8 +328,10 @@ public class CoffeeMachine extends Device {
 
     // Turns off the coffee machine
     private STATES Stop() {
-        this.isOn = false;
-
-        return STATES.GOOD;
+        if (this.isOn) {
+            this.isOn = false;
+            return STATES.GOOD;
+        }
+        return STATES.ERROR_NO_STOP;
     }
 }
