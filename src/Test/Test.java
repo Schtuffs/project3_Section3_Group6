@@ -3,6 +3,8 @@ package Test;
 import java.time.LocalTime;
 
 import Devices.*;
+import Devices.Device.COMMAND_GET;
+import Devices.Device.COMMAND_SET;
 
 public class Test {
     public static void main(String[] args) {
@@ -160,7 +162,6 @@ public class Test {
             actual = coffee.Check();
 
             Assert.AreEqual(expected, actual);
-            
         }
         // Changes bean brewdays, uses previously tested get command
         {
@@ -182,7 +183,64 @@ public class Test {
     }
 
     private static void TestShower() {
+        // Test constructor
+        {
+            Shower shower = new Shower();
+            String expected = "GOOD";
+            String actual;
 
+            actual = shower.Check();
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        // Test getters
+
+        // Get temperature
+        {
+            Shower shower = new Shower();
+            String expected = "15.0";
+            String actual;
+
+            actual = shower.Get(COMMAND_GET.SHOWER_TEMPERATURE);
+
+            Assert.AreEqual(expected, actual);
+        }
+        // Get headtype
+        {
+            Shower shower = new Shower();
+            String expected = "high efficiency";
+            String actual;
+
+            actual = shower.Get(COMMAND_GET.SHOWER_HEADTYPE);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        // Test setters
+
+        // Set temperature
+        {
+            Shower shower = new Shower();
+            String expected = "20.3";
+            String actual;
+
+            shower.Set(COMMAND_SET.SHOWER_TEMPERATURE, "20.3");
+            actual = shower.Get(COMMAND_GET.SHOWER_TEMPERATURE);
+
+            Assert.AreEqual(expected, actual);
+        }
+        // Set headtype
+        {
+            Shower shower = new Shower();
+            String expected = "rain";
+            String actual;
+
+            shower.Set(COMMAND_SET.SHOWER_HEADTYPE, "RaiN");
+            actual = shower.Get(COMMAND_GET.SHOWER_HEADTYPE);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 
     private static void TestSmokeDetector() {
