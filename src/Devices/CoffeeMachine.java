@@ -104,7 +104,7 @@ public class CoffeeMachine extends Device {
     }
 
     // Inherited methods
-    public STATES Check() {
+    public String Check() {
         // Check if coffee machine should start
         LocalTime current = LocalTime.now();
         current = current.minusNanos(current.getNano());
@@ -112,7 +112,7 @@ public class CoffeeMachine extends Device {
         if (current.equals(this.actualMakeTime) && !this.isOn) {
             // If not on, turn on
             if (!this.isOn) {
-                return this.Start();
+                return this.Start().toString();
             }
             
         }
@@ -126,12 +126,12 @@ public class CoffeeMachine extends Device {
 
                 // Finally, check if runtime is done by checking if the hour wrapped around
                 if (this.brewTimeLeft.getHour() == 23) {
-                    return this.Stop();
+                    return this.Stop().toString();
                 }
             }
         }
 
-        return STATES.GOOD;
+        return STATES.GOOD.toString();
     }
     
     public boolean Set(COMMAND_SET param, String value) {
@@ -178,6 +178,10 @@ public class CoffeeMachine extends Device {
         return this.allFlavours.add(value);
     }
 
+    private boolean SetNewDays(String day) {
+        return true;
+    }
+    
     public String Get(COMMAND_GET param) {
         String result;
         switch (param) {
@@ -196,10 +200,27 @@ public class CoffeeMachine extends Device {
         case COMMAND_GET.BEAN_BREWCOST:
             result = this.beanBrewCost.get(this.selectedFlavour).toString();
             break;
+        case COMMAND_GET.BEAN_DAYS:
+            return this.GetBrewDays();
         default:
             result = STATES.ERROR_UNKNOWN.toString();
         }
         return result;
+    }
+
+    private String GetBrewDays() {
+        String[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+        String toReturn = "";
+        // Adds days to string based on true
+        for (int i = 0; i < days.length; i++) {
+            if (this.makeDays[i]) {
+                if (toReturn.length() != 0) {
+                    toReturn += ", ";
+                }
+                toReturn += days[i];
+            }
+        }
+        return toReturn;
     }
 
     public String Call(COMMAND_CALL param, String args) {

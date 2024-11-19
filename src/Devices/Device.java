@@ -72,7 +72,7 @@ public abstract class Device {
     // Checks device is satisfied with current conditions
     // Ex. Windows are closed between close time and open time
     // Ex. Smoke detector detects no smoke
-    abstract public STATES Check();
+    abstract public String Check();
 
     // Sets value for object based on command param
     abstract public boolean Set(COMMAND_SET param, String value);
