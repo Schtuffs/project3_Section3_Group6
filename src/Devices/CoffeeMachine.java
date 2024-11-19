@@ -134,16 +134,45 @@ public class CoffeeMachine extends Device {
             }
             // See if machine should be running right now
             else {
-                boolean inHour = (this.actualMakeTime.getHour() <= current.getHour() && current.getHour() <= this.userMakeTime.getHour());
-                boolean inMinute = (this.actualMakeTime.getMinute() <= current.getMinute() && current.getMinute() <= this.userMakeTime.getMinute());
-                boolean inSecond = (this.actualMakeTime.getSecond() <= current.getSecond() && current.getSecond() <= this.userMakeTime.getSecond());
-                if (inHour && inMinute && inSecond) {
+                boolean inTime[] = new boolean[] {false, false, false};
+                for (int i = 0; i < 3; i++) {
+                    int actual = 0, user = 0, cur = 0;
+                    switch (i) {
+                    case 0:
+                        actual = this.actualMakeTime.getHour();
+                        user = this.userMakeTime.getHour();
+                        cur = current.getHour();
+                        break;
+                    case 1:
+                        actual = this.actualMakeTime.getMinute();
+                        user = this.userMakeTime.getMinute();
+                        cur = current.getMinute();
+                        break;
+                    case 2:
+                        actual = this.actualMakeTime.getSecond();
+                        user = this.userMakeTime.getSecond();
+                        cur = current.getSecond();
+                        break;
+                    }
+
+                    if (actual > user) {
+                        if (actual <= cur || cur <= user) {
+                            inTime[i] = true;
+                        }
+                    }
+                    else {
+                        if (actual <= cur && cur <= user) {
+                            inTime[i] = true;
+                        }
+                    }
+                }
+                
+                if (inTime[0]  && inTime[1] && inTime[2]) {
                     // Machine should be running but it is not
                     return STATES.ERROR_NO_START.toString();
                 }
             }
         }
-
         return STATES.GOOD.toString();
     }
     
@@ -199,6 +228,7 @@ public class CoffeeMachine extends Device {
         // Try to change the user maketime
         try {
             LocalTime lt = LocalTime.parse(time);
+            lt = lt.minusNanos(lt.getNano());
             this.userMakeTime = lt;
         }
         catch (DateTimeParseException e) {
