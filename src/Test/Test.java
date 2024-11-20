@@ -21,7 +21,7 @@ public class Test {
     }
 
     private static void TestBlinds() {
-
+        
     }
 
     private static void TestCamera() {

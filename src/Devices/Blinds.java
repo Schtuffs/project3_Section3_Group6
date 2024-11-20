@@ -9,19 +9,20 @@ public class Blinds extends Device {
     private static LocalTime closeTime;
 
     public Blinds(LocalTime oTime, LocalTime cTime) {
-
       
         setCloseTime(cTime);
         setOpenTime(oTime);
+
     }
     
     // Inherited methods
     public STATES Check() { 
+
         LocalTime current = LocalTime.now();
         current = current.minusNanos(current.getNano());
 
         if (current.equals(Blinds.openTime) && !this.isOpen) {
-            // If not on, turn on
+            // If not open, open
             if (!this.isOpen) {
                 return this.Open();
             }
@@ -35,7 +36,6 @@ public class Blinds extends Device {
         }
 
         public void setOpenTime(LocalTime oTime){
-
             Blinds.openTime=oTime;
         }
 
