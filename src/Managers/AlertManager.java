@@ -7,10 +7,14 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import Devices.*;
 
-// int POPUP_WIDTH = 500;
-// int POPUP_HEIGHT = 150;
-
 public class AlertManager extends JFrame implements ActionListener {
+
+    // Constants related to the class
+    private String TITLE = "Alarm";
+    private String CLOSE_TEXT = "ok";
+    private String ICON_PATH = "Assets/AlertManager/AlarmIcon.png";
+    private int SCREEN_HEIGHT = 250;
+    private int SCREEN_WIDTH = 500;
 
     private Alarm alarm;
     private String alert;
@@ -18,57 +22,75 @@ public class AlertManager extends JFrame implements ActionListener {
     private JButton okButton;
     private JLabel warningLabel;
 
-    // default constructor for the AlertManager class (calling this will make a pop-up window)
     public AlertManager() {
 
         this.alarm = null;
         this.alert = "An error has occured";
 
-        this.okButton = new JButton("ok");
+        //  arrange the screen to be displayed by the gui
+        ArrangeGUI();
+
+
+    }
+
+    public AlertManager(String alert, Alarm alarm) {
+
+        this.alarm = alarm;
+        this.alert = alert;
+
+        //  arrange the screen to be displayed by the gui
+        ArrangeGUI();
+    }
+
+    // this function is an extension of the constructor just to reduce rewritten code
+    public void ArrangeGUI() {
+
+        this.okButton = new JButton(CLOSE_TEXT);
         this.okButton.addActionListener(this);
         this.okButton.setVisible(true);
 
-        this.warningLabel = new JLabel(alert, SwingConstants.CENTER);
+        this.warningLabel = new JLabel("<html><p style=\"width:250px\">"+alert+"</p></html>", SwingConstants.CENTER);
         this.warningLabel.setVisible(true);
 
-        ImageIcon img = new ImageIcon("src/Assets/AlertManagerIcon.png");
-        //Image rescale = img.getImage();
-        //rescale = rescale.getScaledInstance(80,80,80);
-        //img = (ImageIcon)rescale;
+        ImageIcon img = new ImageIcon(ICON_PATH);
+
+        // scales the image down to the size of the JLabel comp
+        Image newImg = img.getImage();
+        Image scaledImg = newImg.getScaledInstance(80,80, java.awt.Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+        img = scaledIcon;
 
         JLabel icon = new JLabel(img);
 
         // set the dimensions of the Alert Manager window which will be constant 
-        setSize(500,250);
+        setSize(SCREEN_WIDTH,SCREEN_HEIGHT);
         setLayout(null);
         setResizable(false);
-        setTitle("Alarm");
+        setTitle(TITLE);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // place the GUI components on the screen
         this.okButton.setBounds(225,150,50,25);
-        this.warningLabel.setBounds(100,75,300,50);
+        this.warningLabel.setBounds(125,25,375,150);
         icon.setBounds(20,50,80,80);
 
-        this.add(okButton);
-        this.add(warningLabel);
+        this.add(this.okButton);
+        this.add(this.warningLabel);
         this.add(icon);
-
-    }
-
-    // pararmetrized constuctor for the AlertManager class (calling this will make a pop-up window)
-    public AlertManager(Alarm alarm, String alert) {
 
     }
 
     // Calls beep function from alarm
     public boolean Beep() {
-        return this.alarm.Beep();
+        if (!(alarm==null)) {
+            return alarm.Beep();
+        }
+        return false;
     }
 
     // closes the pop-up window and deletes the class 
-    private void CloseWindow() {
+    public void CloseWindow() {
         this.dispose();
     }
 

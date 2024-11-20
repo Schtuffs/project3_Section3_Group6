@@ -17,6 +17,8 @@ public abstract class Device {
         ERROR_READ, ERROR_WRITE,
         // Thermostat
         ERROR_INVALID_UNIT,
+        // Sensor
+        ERROR_INVALID_TIME,
         // All
         ERROR_PARSE, ERROR_UNKNOWN
     }
