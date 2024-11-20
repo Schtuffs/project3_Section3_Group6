@@ -1,6 +1,8 @@
 package Devices;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+
 import static java.time.temporal.ChronoUnit.NANOS;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ public class CoffeeMachine extends Device {
     public CoffeeMachine() {
         // Simple allocations and sets
         this.isOn = false;
+        this.brewTimeLeft = LocalTime.parse("00:00:00");
         this.makeDays = new boolean[7];
         for (int i = 0; i < makeDays.length; i++) {
             makeDays[i] = true;
@@ -104,7 +107,7 @@ public class CoffeeMachine extends Device {
     }
 
     // Inherited methods
-    public STATES Check() {
+    public String Check() {
         // Check if coffee machine should start
         LocalTime current = LocalTime.now();
         current = current.minusNanos(current.getNano());
@@ -112,7 +115,7 @@ public class CoffeeMachine extends Device {
         if (current.equals(this.actualMakeTime) && !this.isOn) {
             // If not on, turn on
             if (!this.isOn) {
-                return this.Start();
+                return this.Start().toString();
             }
             
         }
@@ -126,12 +129,51 @@ public class CoffeeMachine extends Device {
 
                 // Finally, check if runtime is done by checking if the hour wrapped around
                 if (this.brewTimeLeft.getHour() == 23) {
-                    return this.Stop();
+                    return this.Stop().toString();
+                }
+            }
+            // See if machine should be running right now
+            else {
+                boolean inTime[] = new boolean[] {false, false, false};
+                for (int i = 0; i < 3; i++) {
+                    int actual = 0, user = 0, cur = 0;
+                    switch (i) {
+                    case 0:
+                        actual = this.actualMakeTime.getHour();
+                        user = this.userMakeTime.getHour();
+                        cur = current.getHour();
+                        break;
+                    case 1:
+                        actual = this.actualMakeTime.getMinute();
+                        user = this.userMakeTime.getMinute();
+                        cur = current.getMinute();
+                        break;
+                    case 2:
+                        actual = this.actualMakeTime.getSecond();
+                        user = this.userMakeTime.getSecond();
+                        cur = current.getSecond();
+                        break;
+                    }
+
+                    if (actual > user) {
+                        if (actual <= cur || cur <= user) {
+                            inTime[i] = true;
+                        }
+                    }
+                    else {
+                        if (actual <= cur && cur <= user) {
+                            inTime[i] = true;
+                        }
+                    }
+                }
+                
+                if (inTime[0]  && inTime[1] && inTime[2]) {
+                    // Machine should be running but it is not
+                    return STATES.ERROR_NO_START.toString();
                 }
             }
         }
-
-        return STATES.GOOD;
+        return STATES.GOOD.toString();
     }
     
     public boolean Set(COMMAND_SET param, String value) {
@@ -142,6 +184,10 @@ public class CoffeeMachine extends Device {
             return this.SetBeansLeft(value);
         case COMMAND_SET.BEAN_NEW:
             return this.SetNewBean(value);
+        case COMMAND_SET.BEAN_MAKETIME:
+            return this.SetBeanMakeTime(value);
+        case COMMAND_SET.BEAN_DAYS:
+            return this.SetNewDays(value);
         default:
             return false;
         }
@@ -178,6 +224,45 @@ public class CoffeeMachine extends Device {
         return this.allFlavours.add(value);
     }
 
+    private boolean SetBeanMakeTime(String time) {
+        // Try to change the user maketime
+        try {
+            LocalTime lt = LocalTime.parse(time);
+            lt = lt.minusNanos(lt.getNano());
+            this.userMakeTime = lt;
+        }
+        catch (DateTimeParseException e) {
+            return false;
+        }
+        // Change the actual make time as well
+        LocalTime makeTime = this.userMakeTime.minusHours(this.brewTimes.get(this.selectedFlavour).getHour());
+        makeTime = makeTime.minusMinutes(this.brewTimes.get(this.selectedFlavour).getMinute());
+        this.actualMakeTime = makeTime.minusSeconds(this.brewTimes.get(this.selectedFlavour).getSecond());
+        return true;
+    }
+    
+    private boolean SetNewDays(String days) {
+        // Setup map for days
+        Map<String, Integer> dMap = new HashMap<>();
+        dMap.put("Sunday", 0);
+        dMap.put("Monday", 1);
+        dMap.put("Tuesday", 2);
+        dMap.put("Wednesday", 3);
+        dMap.put("Thursday", 4);
+        dMap.put("Friday", 5);
+        dMap.put("Saturday", 6);
+        
+        // Split user string into separate days
+        String[] daysSplit = days.split(", ");
+        for (String day : daysSplit) {
+            if (dMap.containsKey(day)) {
+                int index = dMap.get(day);
+                this.makeDays[index] = !this.makeDays[index];
+            }
+        }
+        return true;
+    }
+    
     public String Get(COMMAND_GET param) {
         String result;
         switch (param) {
@@ -196,10 +281,30 @@ public class CoffeeMachine extends Device {
         case COMMAND_GET.BEAN_BREWCOST:
             result = this.beanBrewCost.get(this.selectedFlavour).toString();
             break;
+        case COMMAND_GET.BEAN_MAKETIME:
+            result = this.userMakeTime.toString();
+            break;
+        case COMMAND_GET.BEAN_DAYS:
+            return this.GetBrewDays();
         default:
             result = STATES.ERROR_UNKNOWN.toString();
         }
         return result;
+    }
+
+    private String GetBrewDays() {
+        String[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+        String toReturn = "";
+        // Adds days to string based on true
+        for (int i = 0; i < days.length; i++) {
+            if (this.makeDays[i]) {
+                if (toReturn.length() != 0) {
+                    toReturn += ", ";
+                }
+                toReturn += days[i];
+            }
+        }
+        return toReturn;
     }
 
     public String Call(COMMAND_CALL param, String args) {
@@ -225,6 +330,11 @@ public class CoffeeMachine extends Device {
     
     // Start coffee machine with specified stats
     private STATES Start() {
+        // If function is called by user after already being started
+        if (this.isOn) {
+            return STATES.ERROR_NO_START;
+        }
+
         // Check for bean count
         double beansLeft = this.beansRemaining.get(this.selectedFlavour) - this.beanBrewCost.get(this.selectedFlavour);
         if (beansLeft >= 0) {
@@ -248,8 +358,10 @@ public class CoffeeMachine extends Device {
 
     // Turns off the coffee machine
     private STATES Stop() {
-        this.isOn = false;
-
-        return STATES.GOOD;
+        if (this.isOn) {
+            this.isOn = false;
+            return STATES.GOOD;
+        }
+        return STATES.ERROR_NO_STOP;
     }
 }

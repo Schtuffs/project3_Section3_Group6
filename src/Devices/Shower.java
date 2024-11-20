@@ -26,10 +26,9 @@ public class Shower extends Device {
     }
 
     // Inherited methods
-    public STATES Check() {
-        return STATES.GOOD;
+    public String Check() {
+        return STATES.GOOD.toString();
     }
-
     
     public boolean Set(COMMAND_SET param, String value) {
         switch (param) {
