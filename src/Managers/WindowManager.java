@@ -10,6 +10,7 @@ import Devices.*;
 public class WindowManager {
     // Holds the window size
     private final int width, height;
+    private final Dimension min_size;
 
     // Holds the device manager to access its variables later
     private DeviceManager devices;
@@ -30,6 +31,7 @@ public class WindowManager {
         // Setup private variables
         this.width = 1600;
         this.height = 900;
+        this.min_size = new Dimension(1200,600);
         this.screen = SCREENS.SCREEN_MAIN;
         this.window = new JFrame();
         this.cards = new CardLayout();
@@ -42,6 +44,7 @@ public class WindowManager {
         this.window.setLayout(new BorderLayout());
         this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.window.setSize(this.width, this.height);
+        // this.window.setMinimumSize(min_size);
         this.window.setVisible(true);
 
         // Add items to the panel
@@ -204,6 +207,10 @@ public class WindowManager {
         JPanel home = new JPanel();
         home.setLayout(new GridLayout());
 
+        // for laying out panels
+        GridBagConstraints c = new GridBagConstraints();
+        c.ipadx = 0;
+
         JButton but = new JButton("Button of Errors");
         but.addActionListener(new ActionListener() {
             @Override
@@ -216,15 +223,224 @@ public class WindowManager {
 
         // Alarm page
         JPanel alarmPanel = new JPanel();
-        alarmPanel.setLayout(new GridLayout());
-        JLabel alarmLabel = new JLabel("Alarm");
-        alarmPanel.add(alarmLabel);
+        alarmPanel.setLayout(new GridBagLayout());
+
+        // Sample picture to display the alarm 
+        ImageIcon alarmPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        JLabel alarmLabel = new JLabel(alarmPng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 0;
+        alarmPanel.add(alarmLabel, c);
+
+        // Button to Stop the Alarm
+        JButton stopAlarm = new JButton("STOP");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 3;
+        c.ipady = 75;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        c.insets = new Insets(100,200,50,200);
+        alarmPanel.add(stopAlarm, c);
+
+
+
+
+        //////////////////////////////////////////////////////////////////////////////
+        c = new GridBagConstraints();
 
         // Blinds page
         JPanel blindPanel = new JPanel();
-        blindPanel.setLayout(new GridLayout());
-        JLabel blindLabel = new JLabel("Blind");
-        blindPanel.add(blindLabel);
+        blindPanel.setLayout(new GridBagLayout());
+
+        // Sample picture to display the alarm 
+        ImageIcon blindsPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        JLabel blindsLabel = new JLabel(blindsPng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        blindPanel.add(blindsLabel, c);
+
+        // Text to show Automatic Open Time
+        JLabel openTime = new JLabel("<html><p style=\"width:250px\">Automatic Open Time</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.gridwidth = 1;
+        blindPanel.add(openTime, c);
+
+        // Button to increment hour
+        JButton incrementHourOpen = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(25,160,0,160);
+        blindPanel.add(incrementHourOpen, c);
+
+        // Button to increment minute
+        JButton incrementMinuteOpen = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        blindPanel.add(incrementMinuteOpen, c);
+
+        // Button to increment second
+        JButton incrementSecondOpen = new JButton("˄");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        blindPanel.add(incrementSecondOpen, c);
+
+        // Display the Open Time 
+        JTextField openTimeDisplay = new JTextField("00:00:00");
+        openTimeDisplay.setFont(null);
+        openTimeDisplay.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,160,0,160);
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 3;
+        c.ipady = 50;
+        blindPanel.add(openTimeDisplay, c);
+
+        // Button to decrement hour
+        JButton decrementHourOpen = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        blindPanel.add(decrementHourOpen, c);
+
+        // Button to decrement hour
+        JButton decrementMinuteOpen = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        blindPanel.add(decrementMinuteOpen, c);
+
+
+        // Button to decrement second
+        JButton decrementSecondOpen = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        blindPanel.add(decrementSecondOpen, c);
+
+        // Text to show Automatic Open Time
+        JLabel closeTime = new JLabel("<html><p style=\"width:250px\">Automatic Close Time</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,0,0,0);
+        c.gridx = 1;
+        c.gridy = 5;
+        c.ipady = 50;
+        c.gridwidth = 1;
+        blindPanel.add(closeTime, c);
+
+        // Button to increment hour
+        JButton incrementHourClose = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(25,160,0,160);
+        blindPanel.add(incrementHourClose, c);
+
+        // Button to increment minute
+        JButton incrementMinuteClose = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        blindPanel.add(incrementMinuteClose, c);
+
+        // Button to increment second
+        JButton incrementSecondClose = new JButton("˄");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        blindPanel.add(incrementSecondClose, c);
+
+        // Display the Open Time 
+        JTextField closeTimeDisplay = new JTextField("00:00:00");
+        closeTimeDisplay.setFont(null);
+        closeTimeDisplay.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,160,0,160);
+        c.gridx = 0;
+        c.gridy = 7;
+        c.gridwidth = 3;
+        c.ipady = 50;
+        blindPanel.add(closeTimeDisplay, c);
+
+        // Button to decrement hour
+        JButton decrementHourClose = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 8;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        blindPanel.add(decrementHourClose, c);
+
+        // Button to decrement hour
+        JButton decrementMinuteClose = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 8;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        blindPanel.add(decrementMinuteClose, c);
+
+
+        // Button to decrement second
+        JButton decrementSecondClose = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 8;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        blindPanel.add(decrementSecondClose, c);
+
+        // Open or close Blinds
+        JButton openClose = new JButton("Open");
+        c.insets = new Insets(50,200,0,200);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 9;
+        c.gridwidth = 3;
+        c.ipady = 50;
+        c.ipadx = 100;
+        blindPanel.add(openClose, c);
+
+
+
+
+
+        ////////////////////////////////////////////////////////////////////////
+        c = new GridBagConstraints();
         
         // Camera page
         JPanel cameraPanel = new JPanel();
@@ -238,23 +454,287 @@ public class WindowManager {
         JLabel coffeeLabel = new JLabel("Coffee");
         coffeePanel.add(coffeeLabel);
         
+        ///////////////////////////////////////////////////////////////////////
+        c = new GridBagConstraints();
+        
         // Sensor page
         JPanel sensorPanel = new JPanel();
-        sensorPanel.setLayout(new GridLayout());
-        JLabel sensorLabel = new JLabel("Sensor");
-        sensorPanel.add(sensorLabel);
+        sensorPanel.setLayout(new GridBagLayout());
+
+        // Sample picture to display the alarm 
+        ImageIcon sensorPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        JLabel sensorLabel = new JLabel(sensorPng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        sensorPanel.add(sensorLabel, c);
+
+        // Text to show Automatic Open Time
+        JLabel sensorOpenTime = new JLabel("<html><p style=\"width:250px\">Automatic Open Time</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.gridwidth = 1;
+        sensorPanel.add(sensorOpenTime, c);
+
+        // Button to increment hour
+        JButton s_incrementHourOpen = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(25,160,0,160);
+        sensorPanel.add(s_incrementHourOpen, c);
+
+        // Button to increment minute
+        JButton s_incrementMinuteOpen = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        sensorPanel.add(s_incrementMinuteOpen, c);
+
+        // Button to increment second
+        JButton s_incrementSecondOpen = new JButton("˄");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        sensorPanel.add(s_incrementSecondOpen, c);
+
+        // Display the Open Time 
+        JTextField s_openTimeDisplay = new JTextField("00:00:00");
+        s_openTimeDisplay.setFont(null);
+        s_openTimeDisplay.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,160,0,160);
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 3;
+        c.ipady = 50;
+        sensorPanel.add(s_openTimeDisplay, c);
+
+        // Button to decrement hour
+        JButton s_decrementHourOpen = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        sensorPanel.add(s_decrementHourOpen, c);
+
+        // Button to decrement hour
+        JButton s_decrementMinuteOpen = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        sensorPanel.add(s_decrementMinuteOpen, c);
+
+
+        // Button to decrement second
+        JButton s_decrementSecondOpen = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        sensorPanel.add(s_decrementSecondOpen, c);
+
+        // Text to show Automatic Open Time
+        JLabel s_closeTime = new JLabel("<html><p style=\"width:250px\">Automatic Close Time</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,0,0,0);
+        c.gridx = 1;
+        c.gridy = 5;
+        c.ipady = 50;
+        c.gridwidth = 1;
+        sensorPanel.add(s_closeTime, c);
+
+        // Button to increment hour
+        JButton s_incrementHourClose = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(25,160,0,160);
+        sensorPanel.add(s_incrementHourClose, c);
+
+        // Button to increment minute
+        JButton s_incrementMinuteClose = new JButton("^");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        sensorPanel.add(s_incrementMinuteClose, c);
+
+        // Button to increment second
+        JButton s_incrementSecondClose = new JButton("˄");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        sensorPanel.add(s_incrementSecondClose, c);
+
+        // Display the Open Time 
+        JTextField s_closeTimeDisplay = new JTextField("00:00:00");
+        s_closeTimeDisplay.setFont(null);
+        s_closeTimeDisplay.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,160,0,160);
+        c.gridx = 0;
+        c.gridy = 7;
+        c.gridwidth = 3;
+        c.ipady = 50;
+        sensorPanel.add(s_closeTimeDisplay, c);
+
+        // Button to decrement hour
+        JButton s_decrementHourClose = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 8;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        sensorPanel.add(s_decrementHourClose, c);
+
+        // Button to decrement hour
+        JButton s_decrementMinuteClose = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 8;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        sensorPanel.add(s_decrementMinuteClose, c);
+
+
+        // Button to decrement second
+        JButton s_decrementSecondClose = new JButton("˅");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 8;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        sensorPanel.add(s_decrementSecondClose, c);
+
+        // Dismiss Sensor
+        JButton dismiss = new JButton("Dismiss");
+        // only display when it has triggered an alarm
+        dismiss.setVisible(false);
+        c.insets = new Insets(50,200,0,200);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 9;
+        c.gridwidth = 3;
+        c.ipady = 50;
+        c.ipadx = 100;
+        sensorPanel.add(dismiss, c);
+
+
+
+
+
+        ///////////////////////////////////////////////
+        c = new GridBagConstraints();
+        
         
         // Shower page
         JPanel showerPanel = new JPanel();
-        showerPanel.setLayout(new GridLayout());
-        JLabel showerLabel = new JLabel("Shower");
-        showerPanel.add(showerLabel);
+        showerPanel.setLayout(new GridBagLayout());
+
+        // Sample picture to display the shower 
+        ImageIcon showerPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        JLabel showerLabel = new JLabel(showerPng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        showerPanel.add(showerLabel, c);
+
+        // Text to show patterns
+        JLabel temperText = new JLabel("<html><p style=\"width:100px\">Temperature C</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        showerPanel.add(temperText, c);
+
+        // Text to show patterns
+        JLabel patternsText = new JLabel("<html><p style=\"width:100px\">Head Pattern</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        showerPanel.add(patternsText, c);
+
+        JComboBox<String> headPatterns = new JComboBox<String>();
+        headPatterns.addItem("pattern1");
+        headPatterns.addItem("pattern2");
+        headPatterns.addItem("pattern3");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,50,0,50);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.ipadx = 50;
+        c.ipady = 25;
+        c.gridwidth = 1;
+        showerPanel.add(headPatterns, c);
+
+
+        JSpinner temper = new JSpinner(new SpinnerNumberModel(1, -50, 50, 1));
+        temper.setValue(5);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,100,0,100);
+        c.gridx = 1;
+        c.gridy = 2;
+        c.ipadx = 20;
+        c.ipady = 25;
+        c.gridwidth = 1;
+        showerPanel.add(temper, c);
+        
+
+        /////////////////////////////////////////////////////////////////
+        c = new GridBagConstraints();
         
         // SmokeDetector page
         JPanel smokePanel = new JPanel();
         smokePanel.setLayout(new GridLayout());
-        JLabel smokeLabel = new JLabel("Smoke");
-        smokePanel.add(smokeLabel);
+        
+        /// Simply show the smoke detector since it is uninteractable 
+        // Sample picture to display the smokey detector 
+        ImageIcon smokePng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        JLabel smokeLabel = new JLabel(smokePng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        smokePanel.add(smokeLabel, c);
+
+
+
+
+
+        /////////////////////////////////////
+        c = new GridBagConstraints();
+        
         
         // Thermostat page
         JPanel thermoPanel = new JPanel();
