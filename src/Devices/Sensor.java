@@ -167,11 +167,11 @@ public class Sensor extends Device {
 
      // Inherited methods
 
-    public STATES Check() {
+    public String Check() {
         if (this.openTime.equals(this.closeTime)) {
-            return STATES.ERROR_INVALID_TIME;
+            return STATES.ERROR_INVALID_TIME.toString();
         }
-        return STATES.GOOD;
+        return STATES.GOOD.toString();
     }
 
     // Sets value for object based on command param

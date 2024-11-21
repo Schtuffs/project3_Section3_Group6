@@ -235,10 +235,10 @@ public class Alarm extends Device {
 
     }
 
-    public STATES Check() {
+    public String Check() {
         if (this==null) {
-            return STATES.ERROR_NO_BEEP;
+            return STATES.ERROR_NO_BEEP.toString();
         }
-        return STATES.GOOD;   
+        return STATES.GOOD.toString();   
     }
 }
