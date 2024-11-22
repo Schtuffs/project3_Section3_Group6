@@ -14,6 +14,9 @@ public class Thermostat extends Device {
         this.targetHumidity = targetHumid;
         // Temperature default is 20
         this.targetTemperature = targetTemp;
+
+        this.temperature = targetTemp;
+        this.humidity = targetHumid;
     }
 
     // Inherited methods
@@ -69,11 +72,13 @@ public class Thermostat extends Device {
         // if the current unit is fahrenheit, convert the current temperature (assumed celsius) to fahrenheit
         if (!newUnit){
             this.temperature = ((9/5) * temperature + 32);
+            this.targetTemperature = ((9/5) * targetTemperature + 32);
         }
 
         // if the current unit is celsius, convert the current temperature (assumed fahrenheit) to fahrenheit
         if (newUnit){
             this.temperature = ((5/9) * (temperature - 32));
+            this.targetTemperature = ((5/9) * (targetTemperature - 32));
         }
     }
 
@@ -82,12 +87,25 @@ public class Thermostat extends Device {
 
         // set the new temperature to the target
         // this can be implemented in a fancier way, but is out of scope for now.
-        this.temperature = target;
+        this.targetTemperature = target;
+        return STATES.GOOD; 
+    }
+
+    public STATES SetTemperature(double temp) { 
+
+        // set the new temperature to the target
+        // this can be implemented in a fancier way, but is out of scope for now.
+        this.temperature = temp;
         return STATES.GOOD; 
     }
 
     public STATES SetTargetHumidity(double target) { 
-        this.humidity = target;
+        this.targetHumidity = target;
+        return STATES.GOOD; 
+    }
+
+    public STATES SetHumidity(double humid) { 
+        this.humidity = humid;
         return STATES.GOOD; 
     }
 

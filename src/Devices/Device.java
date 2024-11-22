@@ -1,7 +1,7 @@
 package Devices;
 public abstract class Device {
     protected DEVICE_TYPE type, Id;
-    protected enum STATES {
+    public enum STATES {
         GOOD,
         // Smoke detector
         SMOKE_DETECTED,

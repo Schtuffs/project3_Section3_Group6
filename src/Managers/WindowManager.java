@@ -7,6 +7,10 @@ import java.awt.event.ActionListener;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import Devices.*;
+import Devices.Device.COMMAND_CALL;
+import Devices.Device.COMMAND_GET;
+import Devices.Device.COMMAND_SET;
+import Devices.Device.STATES;
 
 public class WindowManager {
     // Holds the window size
@@ -40,7 +44,7 @@ public class WindowManager {
     private CoffeeMachine coffeeMachine;
     private Camera camera;
     private Shower shower;
-    private SmokeDetector smokeDetector;
+    private SmokeDetector smokey;
     private Blinds blinds;
     private Thermostat thermostat;
 
@@ -66,7 +70,11 @@ public class WindowManager {
         alarm = new Alarm();
         blinds = new Blinds(LocalTime.parse("06:00:00"), LocalTime.parse("18:00:00"));
         shower = new Shower();
-        sensor = new Sensor(false, false, LocalTime.parse("06:00:00"), LocalTime.parse("06:00:00"), alarm);
+        sensor = new Sensor(false, false, LocalTime.parse("09:00:00"), LocalTime.parse("15:00:00"), alarm);
+        thermostat = new Thermostat(true, 20, 20);
+        smokey = new SmokeDetector();
+        coffeeMachine = new CoffeeMachine();
+        // camera = new Camera();
 
         // Create window
         this.window.getContentPane().setBackground(Color.DARK_GRAY);
@@ -279,7 +287,7 @@ public class WindowManager {
         alarmPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the alarm 
-        ImageIcon alarmPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        ImageIcon alarmPng = new ImageIcon("Assets/Devices/Alarm.png");
         JLabel alarmLabel = new JLabel(alarmPng);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
@@ -320,7 +328,7 @@ public class WindowManager {
         blindPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the alarm 
-        ImageIcon blindsPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        ImageIcon blindsPng = new ImageIcon("Assets/Devices/blinds.png");
         JLabel blindsLabel = new JLabel(blindsPng);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -636,6 +644,25 @@ public class WindowManager {
 
         // Open or close Blinds
         JButton openClose = new JButton("Open");
+
+        openClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (openClose.getText().equals("Open")) {
+                    blinds.Open();
+                    openClose.setText("Close");
+                }
+                else if (openClose.getText().equals("Close")) {
+                    blinds.Close();
+                    openClose.setText("Open");
+                }
+                
+            }
+            
+        });
+
         c.insets = new Insets(50,200,0,200);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -655,14 +682,28 @@ public class WindowManager {
         // Camera page
         JPanel cameraPanel = new JPanel();
         cameraPanel.setLayout(new GridLayout());
-        JLabel cameraLabel = new JLabel("Camera");
-        cameraPanel.add(cameraLabel);
+
+        ImageIcon cameraPng = new ImageIcon("Assets/Devices/camera.png");
+        JLabel cameraLabel = new JLabel(cameraPng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        cameraPanel.add(cameraLabel, c);
+
+        ////////////////////////////////////////////////////////////////
         
         // Coffee page
         JPanel coffeePanel = new JPanel();
         coffeePanel.setLayout(new GridLayout());
-        JLabel coffeeLabel = new JLabel("Coffee");
-        coffeePanel.add(coffeeLabel);
+
+        ImageIcon coffeePng = new ImageIcon("Assets/Devices/coffeeMachine.png");
+        JLabel coffeeLabel = new JLabel(coffeePng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        coffeePanel.add(coffeeLabel, c);
         
         ///////////////////////////////////////////////////////////////////////
         c = new GridBagConstraints();
@@ -672,7 +713,7 @@ public class WindowManager {
         sensorPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the alarm 
-        ImageIcon sensorPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        ImageIcon sensorPng = new ImageIcon("Assets/Devices/sensor.png");
         JLabel sensorLabel = new JLabel(sensorPng);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -681,7 +722,7 @@ public class WindowManager {
         sensorPanel.add(sensorLabel, c);
 
         // Text to show Automatic Open Time
-        JLabel sensorOpenTime = new JLabel("<html><p style=\"width:250px\">Automatic Open Time</p></html>", SwingConstants.CENTER);
+        JLabel sensorOpenTime = new JLabel("<html><p style=\"width:250px\">Open Time</p></html>", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
@@ -691,6 +732,18 @@ public class WindowManager {
 
         // Button to increment hour
         JButton s_incrementHourOpen = new JButton("^");
+
+        s_incrementHourOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetOpenTime(sensor.GetOpenTime().plusHours(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 2;
@@ -701,6 +754,18 @@ public class WindowManager {
 
         // Button to increment minute
         JButton s_incrementMinuteOpen = new JButton("^");
+
+        s_incrementMinuteOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetOpenTime(sensor.GetOpenTime().plusMinutes(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 2;
@@ -710,6 +775,18 @@ public class WindowManager {
 
         // Button to increment second
         JButton s_incrementSecondOpen = new JButton("˄");
+
+        s_incrementSecondOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetOpenTime(sensor.GetOpenTime().plusSeconds(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 2;
@@ -731,6 +808,18 @@ public class WindowManager {
 
         // Button to decrement hour
         JButton s_decrementHourOpen = new JButton("˅");
+
+        s_incrementHourOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetOpenTime(sensor.GetOpenTime().minusHours(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 4;
@@ -739,8 +828,20 @@ public class WindowManager {
         c.insets = new Insets(0,160,25,160);
         sensorPanel.add(s_decrementHourOpen, c);
 
-        // Button to decrement hour
+        // Button to decrement min
         JButton s_decrementMinuteOpen = new JButton("˅");
+
+        s_decrementMinuteOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetOpenTime(sensor.GetOpenTime().minusMinutes(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 4;
@@ -752,6 +853,18 @@ public class WindowManager {
 
         // Button to decrement second
         JButton s_decrementSecondOpen = new JButton("˅");
+
+        s_decrementSecondOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetOpenTime(sensor.GetOpenTime().minusSeconds(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 4;
@@ -761,7 +874,7 @@ public class WindowManager {
         sensorPanel.add(s_decrementSecondOpen, c);
 
         // Text to show Automatic Open Time
-        JLabel s_closeTime = new JLabel("<html><p style=\"width:250px\">Automatic Close Time</p></html>", SwingConstants.CENTER);
+        JLabel s_closeTime = new JLabel("<html><p style=\"width:250px\">Close Time</p></html>", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0,0,0,0);
         c.gridx = 1;
@@ -772,6 +885,18 @@ public class WindowManager {
 
         // Button to increment hour
         JButton s_incrementHourClose = new JButton("^");
+
+        s_incrementHourClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetCloseTime(sensor.GetCloseTime().plusHours(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 6;
@@ -782,6 +907,17 @@ public class WindowManager {
 
         // Button to increment minute
         JButton s_incrementMinuteClose = new JButton("^");
+
+        s_incrementMinuteClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetCloseTime(sensor.GetCloseTime().plusMinutes(1));
+                
+            }
+            
+        });
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 6;
@@ -791,6 +927,17 @@ public class WindowManager {
 
         // Button to increment second
         JButton s_incrementSecondClose = new JButton("˄");
+
+        s_incrementSecondClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetCloseTime(sensor.GetCloseTime().plusSeconds(1));
+                
+            }
+            
+        });
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 6;
@@ -812,6 +959,17 @@ public class WindowManager {
 
         // Button to decrement hour
         JButton s_decrementHourClose = new JButton("˅");
+
+        s_decrementHourClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetCloseTime(sensor.GetCloseTime().minusHours(1));
+                
+            }
+            
+        });
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 8;
@@ -822,6 +980,18 @@ public class WindowManager {
 
         // Button to decrement hour
         JButton s_decrementMinuteClose = new JButton("˅");
+
+        s_decrementMinuteClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetCloseTime(sensor.GetCloseTime().minusMinutes(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 8;
@@ -833,6 +1003,18 @@ public class WindowManager {
 
         // Button to decrement second
         JButton s_decrementSecondClose = new JButton("˅");
+
+        s_decrementSecondClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetCloseTime(sensor.GetCloseTime().minusSeconds(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 8;
@@ -867,7 +1049,7 @@ public class WindowManager {
         showerPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the shower 
-        ImageIcon showerPng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        ImageIcon showerPng = new ImageIcon("Assets/Devices/shower.png");
         JLabel showerLabel = new JLabel(showerPng);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -895,10 +1077,15 @@ public class WindowManager {
         c.gridwidth = 1;
         showerPanel.add(patternsText, c);
 
+
+
+
+
         JComboBox<String> headPatterns = new JComboBox<String>();
-        headPatterns.addItem("pattern1");
-        headPatterns.addItem("pattern2");
-        headPatterns.addItem("pattern3");
+        for (int i = 0;i<shower.GetPatternCount();i++) {
+            headPatterns.addItem(shower.GetHeadPattern(i));
+        }
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0,50,0,50);
         c.gridx = 0;
@@ -908,9 +1095,41 @@ public class WindowManager {
         c.gridwidth = 1;
         showerPanel.add(headPatterns, c);
 
+        // start or stop the shower
+        JButton startStopShower = new JButton("Start");
 
-        JSpinner temper = new JSpinner(new SpinnerNumberModel(1, -50, 50, 1));
-        temper.setValue(5);
+        startStopShower.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (startStopShower.getText().equals("Start")) {
+                    shower.Call(COMMAND_CALL.START, null);
+                    startStopShower.setText("Stop");
+                }
+                else if (startStopShower.getText().equals("Stop")) {
+                    shower.Call(COMMAND_CALL.STOP, null);
+                    startStopShower.setText("Start");
+                }
+                
+            }
+            
+        });
+
+        
+
+        c.insets = new Insets(50,200,0,200);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 2;
+        c.ipady = 50;
+        c.ipadx = 100;
+        showerPanel.add(startStopShower, c);
+
+
+        JSpinner temper = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
+        temper.setValue(Double.parseDouble(shower.Get(COMMAND_GET.SHOWER_TEMPERATURE)));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0,100,0,100);
         c.gridx = 1;
@@ -930,7 +1149,7 @@ public class WindowManager {
         
         /// Simply show the smoke detector since it is uninteractable 
         // Sample picture to display the smokey detector 
-        ImageIcon smokePng = new ImageIcon("Assets/AlertManager/AlarmIcon.png");
+        ImageIcon smokePng = new ImageIcon("Assets/Devices/smokeDetector.png");
         JLabel smokeLabel = new JLabel(smokePng);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -948,9 +1167,124 @@ public class WindowManager {
         
         // Thermostat page
         JPanel thermoPanel = new JPanel();
-        thermoPanel.setLayout(new GridLayout());
-        JLabel thermoLabel = new JLabel("Thermostat");
-        thermoPanel.add(thermoLabel);
+        thermoPanel.setLayout(new GridBagLayout());
+
+        ImageIcon thermPng = new ImageIcon("Assets/Devices/thermostat.png");
+        JLabel thermLabel = new JLabel(thermPng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        thermoPanel.add(thermLabel, c);
+
+        // Text to display units 
+        JLabel unitsText = new JLabel("<html><p style=\"width:100px\">Temperature Units</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        thermoPanel.add(unitsText, c);
+
+        // Text to Temperature 
+        JLabel tTemperText = new JLabel("<html><p style=\"width:100px\">Target Temperature</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        thermoPanel.add(tTemperText, c);
+
+        // Text to humidity 
+        JLabel tHumidText = new JLabel("<html><p style=\"width:100px\">Target Humidity</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        thermoPanel.add(tHumidText, c);
+
+        JComboBox<String> units = new JComboBox<String>();
+        units.addItem("C");
+        units.addItem("F");
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,50,0,50);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.ipadx = 50;
+        c.ipady = 25;
+        c.gridwidth = 1;
+        thermoPanel.add(units, c);
+
+        JSpinner thermTemper = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
+        thermTemper.setValue(thermostat.getTargetTemp());
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,100,0,100);
+        c.gridx = 1;
+        c.gridy = 2;
+        c.ipadx = 20;
+        c.ipady = 25;
+        c.gridwidth = 1;
+        thermoPanel.add(thermTemper, c);
+
+        JSpinner thermHumid = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
+        thermHumid.setValue(thermostat.getTargetHumid());
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,100,0,100);
+        c.gridx = 2;
+        c.gridy = 2;
+        c.ipadx = 20;
+        c.ipady = 25;
+        c.gridwidth = 1;
+        thermoPanel.add(thermHumid, c);
+
+        // Text to Current Temperature 
+        JLabel cTemperText = new JLabel("<html><p style=\"width:100px\">Current Temperature</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 3;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        thermoPanel.add(cTemperText, c);
+
+        // Text to humidity 
+        JLabel cHumidText = new JLabel("<html><p style=\"width:100px\">Current Humidity</p></html>", SwingConstants.CENTER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 3;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        thermoPanel.add(cHumidText, c);
+
+        // Display current temperature
+        JTextField cTemp = new JTextField("1");
+        cTemp.setFont(null);
+        cTemp.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 4;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        thermoPanel.add(cTemp, c);
+
+        // Display current humidity
+        JTextField cHumid = new JTextField("1");
+        cHumid.setFont(null);
+        cHumid.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 4;
+        c.ipady = 50;
+        c.ipadx = 100;
+        c.gridwidth = 1;
+        thermoPanel.add(cHumid, c);
         
         
         // Add the different screens to the card container
@@ -976,11 +1310,6 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                // Alarm stuff
-                if (alarm.GetIsBeeping()) {
-                    stopAlarm.setVisible(true);
-                } 
-                else {stopAlarm.setVisible(false);}
 
 
 
@@ -993,6 +1322,24 @@ public class WindowManager {
 
 
                 // Blinds Stuff
+                openTimeDisplay.setText(blinds.getOpenTime().toString());
+                closeTimeDisplay.setText(blinds.getCloseTime().toString());
+
+
+                if (LocalTime.now().getHour()==blinds.getOpenTime().getHour() &&
+                    LocalTime.now().getMinute()==blinds.getOpenTime().getMinute() && 
+                    LocalTime.now().getSecond()==blinds.getOpenTime().getSecond() &&
+                    blinds.getIsOpen()==false) {
+                    blinds.Open();
+                    openClose.setText("Close");
+                }
+                else if (LocalTime.now().getHour()==blinds.getCloseTime().getHour() &&
+                    LocalTime.now().getMinute()==blinds.getCloseTime().getMinute() && 
+                    LocalTime.now().getSecond()==blinds.getCloseTime().getSecond() &&
+                    blinds.getIsOpen()) {
+                    blinds.Close();
+                    openClose.setText("Open");
+                }
 
 
 
@@ -1001,19 +1348,77 @@ public class WindowManager {
 
                 // Thermostat Stuff
 
+                thermostat.SetTargetTemperature((Double)thermTemper.getValue());
+                thermostat.SetTargetHumidity((Double)thermHumid.getValue());
+
+                if (units.getSelectedItem()=="C") {
+                    if (!thermostat.SetUnit(true).equals(STATES.ERROR_INVALID_UNIT)) {
+                        cTemp.setText(""+thermostat.getTargetTemp());
+                        thermTemper.setValue(thermostat.getTemp());
+                    }
+                }
+                else if (units.getSelectedItem()=="F") {
+                    if (!thermostat.SetUnit(false).equals(STATES.ERROR_INVALID_UNIT)) {
+                        cTemp.setText(""+thermostat.getTargetTemp());
+                        thermTemper.setValue(thermostat.getTemp());
+                    }
+                }
+
+                // Randomly change values
+               // System.out.println(thermostat.getTargetTemp()+"  "+thermostat.getTemp());
+                if (thermostat.getTargetTemp()!=thermostat.getTemp()) {
+                    int rand = ((int) (Math.random() * 40 + 1));
+                    if (rand==1 && thermostat.getTargetTemp()>thermostat.getTemp()) {
+                        thermostat.SetTemperature(thermostat.getTemp()+0.1);
+                    }
+                    else if (rand==1 && thermostat.getTargetTemp()<thermostat.getTemp()) {
+                        thermostat.SetTemperature(thermostat.getTemp()-0.1);
+                    }
+                }
+                if (thermostat.getTargetHumid()!=thermostat.getHumidity()) {
+                    int rand = ((int) (Math.random() * 40 + 1));
+                    if (rand==1 && thermostat.getTargetHumid()>thermostat.getHumidity()) {
+                        thermostat.SetHumidity(thermostat.getHumidity()+0.1);
+                    }
+                    else if (rand==1 && thermostat.getTargetHumid()<thermostat.getHumidity()) {
+                        thermostat.SetHumidity(thermostat.getHumidity()-0.1);
+                    }
+                }
+
+                // display values
+
+                cTemp.setText(""+thermostat.getTemp());
+                cHumid.setText(""+thermostat.getHumidity());
+
+
+                // need to do actual vs set calculations here
+
 
 
 
 
                 // Smoke Detector Stuff
-                int rand = ((int) (Math.random() * 4 + 1));
+                int rand = ((int) (Math.random() * 1000 + 1));
 
+                // probably change this to a function in smoke detector
+                if (rand==1) {
+                    smokey.SetIsSmokey(true);
+                } 
+                else {smokey.SetIsSmokey(false); }
+
+                if (smokey.GetIsSmokey()) {
+                    alarm.TriggerAlarm("Theres a fire in the house!",smokey);
+                }
 
 
 
 
 
                 // Shower Stuff
+                shower.Set(COMMAND_SET.SHOWER_TEMPERATURE,(""+temper.getValue()));
+
+
+
 
 
 
@@ -1032,8 +1437,16 @@ public class WindowManager {
 
 
                 // Sensor stuff
-                openTimeDisplay.setText(blinds.getOpenTime().toString());
-                closeTimeDisplay.setText(blinds.getCloseTime().toString());
+                sensor.MonitorDevice(blinds);
+                s_openTimeDisplay.setText(sensor.GetOpenTime().toString());
+                s_closeTimeDisplay.setText(sensor.GetCloseTime().toString());
+
+
+                // Alarm stuff
+                if (alarm.GetIsBeeping()) {
+                    stopAlarm.setVisible(true);
+                } 
+                else {stopAlarm.setVisible(false);}
             }
 
         } );
