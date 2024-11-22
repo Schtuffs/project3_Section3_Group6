@@ -29,7 +29,7 @@ public class FileManager {
 
         try {
             // Creating a new file to write device information to
-            FileWriter f = new FileWriter("Saved" + filename);
+            FileWriter f = new FileWriter("Saved" + filename + ".txt");
             // Depending on the name of the file, since each device will have it's own file, write specific strings of data
             switch (filename) {
                 case "Alarm":
@@ -44,7 +44,7 @@ public class FileManager {
                 case "Blinds":
                     // can't finish implementing yet, enums not written
                     // f.write(String.valueOf(((Blinds)device).Get(COMMAND_GET.BLINDS_IS_OPEN))));
-                    break;\
+                    break;
 
                 case "Camera":
                     // can't finish implementing yet, enums not written

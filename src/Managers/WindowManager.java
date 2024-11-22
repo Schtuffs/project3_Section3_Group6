@@ -1394,8 +1394,8 @@ public class WindowManager {
 
                 // display values
 
-                cTemp.setText(""+thermostat.getTemp());
-                cHumid.setText(""+thermostat.getHumidity());
+                cTemp.setText(String.format("%.1f", +thermostat.getTemp()));
+                cHumid.setText(String.format("%.1f", +thermostat.getHumidity()));
 
 
                 // need to do actual vs set calculations here
