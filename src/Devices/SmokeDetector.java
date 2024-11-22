@@ -34,8 +34,8 @@ public class SmokeDetector extends Device {
 
     @Override
     public String Get(COMMAND_GET param) {
-        
-        if ( param == COMMAND_GET.IS_SMOKEY ) {
+        // Getting isSmokey
+        if ( param == COMMAND_GET.SD_IS_SMOKEY ) {
             return String.valueOf(this.isSmokey);
         }
 
