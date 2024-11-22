@@ -132,6 +132,20 @@ public class Sensor extends Device {
             alarm.triggerAlarm();
         }
         */
+
+        if (LocalTime.now().getHour()==this.openTime.getHour() && 
+            LocalTime.now().getMinute()==this.openTime.getMinute() && 
+            LocalTime.now().getSecond()==this.openTime.getSecond() && 
+            blinds.getIsOpen()==false) {
+            alarm.TriggerAlarm("Blinds are not open!", this);
+        }
+        else if (LocalTime.now().getHour()==this.closeTime.getHour() && 
+                 LocalTime.now().getMinute()==this.closeTime.getMinute() && 
+                 LocalTime.now().getSecond()==this.closeTime.getSecond() && 
+                 blinds.getIsOpen()) {
+            alarm.TriggerAlarm("Blinds are not closed!", this);
+        }
+
         return false;
     }
 
@@ -167,8 +181,11 @@ public class Sensor extends Device {
 
      // Inherited methods
 
-    public STATES Check() {
-        return STATES.GOOD;
+    public String Check() {
+        if (this.openTime.equals(this.closeTime)) {
+            return STATES.ERROR_INVALID_TIME.toString();
+        }
+        return STATES.GOOD.toString();
     }
 
     // Sets value for object based on command param

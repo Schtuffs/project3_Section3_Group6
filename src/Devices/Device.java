@@ -1,7 +1,7 @@
 package Devices;
 public abstract class Device {
     protected DEVICE_TYPE type, Id;
-    protected enum STATES {
+    public enum STATES {
         GOOD,
         // Smoke detector
         SMOKE_DETECTED,
@@ -17,6 +17,8 @@ public abstract class Device {
         ERROR_READ, ERROR_WRITE,
         // Thermostat
         ERROR_INVALID_UNIT,
+        // Sensor
+        ERROR_INVALID_TIME,
         // All
         ERROR_PARSE, ERROR_UNKNOWN
     }
@@ -40,6 +42,10 @@ public abstract class Device {
         BEAN_FLAVOUR, BEAN_NEW, BEAN_ADD, BEAN_MAKETIME, BEAN_DAYS,
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+        // Smoke Detector
+        IS_SMOKEY,
+        // Thermostat
+        TEMPERATURE, HUMIDITY, TARGET_TEMP, TARGET_HUMID, CELSIUS,
         // All
         UNKNOWN
 
@@ -55,8 +61,19 @@ public abstract class Device {
           
         // Coffee Machine, bean related
         BEAN_FLAVOUR, BEAN_LEFT, BEAN_BREWTIME, BEAN_MAKETIME, BEAN_BREWTIMELEFT, BEAN_BREWCOST, BEAN_DAYS,
+
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+
+        // Thermo
+        THERM_TEMPERATURE, THERM_HUMIDITY, THERM_TARGET_TEMP, THERM_TARGET_HUMID, THERM_CELSIUS,
+
+        // Smoke Detector
+        SD_IS_SMOKEY, 
+
+        // Thermostat
+        TEMPERATURE, HUMIDITY, TARGET_TEMP, TARGET_HUMID, CELSIUS,
+        
         // All
         UNKNOWN
     }

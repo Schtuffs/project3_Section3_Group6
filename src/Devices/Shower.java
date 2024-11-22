@@ -31,12 +31,19 @@ public class Shower extends Device {
     }
     
     public boolean Set(COMMAND_SET param, String value) {
-        switch (param) {
-        case COMMAND_SET.SHOWER_TEMPERATURE:
+        // switch (param) {
+        // case COMMAND_SET.SHOWER_TEMPERATURE:
+        //     return this.SetTemperature(value);
+        // case COMMAND_SET.SHOWER_HEADTYPE:
+        //     return this.SetHeadPattern(value);
+        // default:
+        //     return false;
+        // }
+        if (param == COMMAND_SET.SHOWER_TEMPERATURE) {
             return this.SetTemperature(value);
-        case COMMAND_SET.SHOWER_HEADTYPE:
+        } else if (param == COMMAND_SET.SHOWER_HEADTYPE) {
             return this.SetHeadPattern(value);
-        default:
+        } else {
             return false;
         }
     }
@@ -67,14 +74,44 @@ public class Shower extends Device {
         }
         return false;
     }
+
+    public boolean SetHeadPattern(int index) {
+        try {
+            this.headPattern = this.allHeadPatterns.get(index);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String GetHeadPattern(int index) {
+        try {
+            return this.allHeadPatterns.get(index);
+        }
+        catch (Exception e) {
+            return "";
+        }
+    }
+
+    public int GetPatternCount() {
+        return this.allHeadPatterns.size();
+    }
     
     public String Get(COMMAND_GET param) {
-        switch (param) {
-        case COMMAND_GET.SHOWER_TEMPERATURE:
+        // switch (param) {
+        // case COMMAND_GET.SHOWER_TEMPERATURE:
+        //     return Double.toString(this.temperature);
+        // case COMMAND_GET.SHOWER_HEADTYPE:
+        //     return this.headPattern;
+        // default:
+        //     return COMMAND_GET.UNKNOWN.toString();
+        // }
+        if (param == COMMAND_GET.SHOWER_TEMPERATURE) {
             return Double.toString(this.temperature);
-        case COMMAND_GET.SHOWER_HEADTYPE:
+        } else if (param == COMMAND_GET.SHOWER_HEADTYPE) {
             return this.headPattern;
-        default:
+        } else {
             return COMMAND_GET.UNKNOWN.toString();
         }
     }
@@ -83,17 +120,28 @@ public class Shower extends Device {
         // Default good
         STATES state = STATES.GOOD;
 
-        switch(param) {
-        case COMMAND_CALL.START:
+        // switch(param) {
+        // case COMMAND_CALL.START:
+        //     state = this.Start();
+        //     break;
+        // case COMMAND_CALL.STOP:
+        //     state = this.Stop();
+        //     break;
+        // default:
+        //     state = STATES.ERROR_UNKNOWN;
+        //     break;
+        // }
+
+
+        if (param == COMMAND_CALL.START) {
             state = this.Start();
-            break;
-        case COMMAND_CALL.STOP:
+        } else if (param == COMMAND_CALL.STOP) {
             state = this.Stop();
-            break;
-        default:
+        } else {
             state = STATES.ERROR_UNKNOWN;
-            break;
         }
+
+
 
         return state.toString();
     }

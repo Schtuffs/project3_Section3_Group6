@@ -2,6 +2,9 @@
 package Devices;
 
 import java.util.ArrayList;
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.util.Scanner; // Import the Scanner class to read text files
 
 public class Camera extends Device {
    
@@ -15,13 +18,7 @@ public class Camera extends Device {
 
     public Camera(/*String location,*/String [] allLocations, String [] everyLocation) {
 
-        boolean isLocation=false;
-
-        
-
         this.isOn=false;
-
-        // this.allLocations=new ArrayList<>();
 
         // Initialize flavours
         this.allLocations = new ArrayList<>();
@@ -29,69 +26,68 @@ public class Camera extends Device {
         this.allLocations.add(everyLocation[i]);
         }
 
-        this.allLocations.add("Backyard");
-        this.allLocations.add("Frontyard");
-        this.allLocations.add("Pool");
-        this.allLocations.add("Front Door");
-        this.allLocations.add("Back Door");
+        //Read from a file with many camera locations
+        try {
+            File cameras = new File("CameraLocations.txt");
+            Scanner systemCams = new Scanner(cameras);
+            while (systemCams.hasNextLine()) {
+              
+                String location = systemCams.nextLine();
+                this.allLocations.add(location);
 
-        for (String loc : everyLocation) {
-            this.allLocations.add(loc.toLowerCase());
+                //Print out every location as it's added for debugging
+              //  System.out.println(location);
+               
+            }
+
+            systemCams.close();
+
+            } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
 
-        //Possible code to search for a location (for later implementation)
-        // for (String loc : this.allLocations){
-        //     if(location.equalsIgnoreCase(loc)){
-        //         isLocation=true;
-        //         this.selectedLocation=location.toLowerCase();
-        //         break;
-        //     }
-        // this.numLocation ++;
-        // }
-
-        if (!isLocation) {
-            this.selectedLocation = this.allLocations.get(3);
-            Camera.numLocation = 3;
-        }
+        this.selectedLocation=this.allLocations.get(3);
+        Camera.numLocation=3;
 
     }
 
     // Inherited methods
-    public STATES Check() { 
+    public String Check() { 
         // Camera current;
         // if (current.isOn==true){
         //     return STATES.GOOD;
         // }
-        return STATES.GOOD;
+        return STATES.GOOD.toString();
     }
     
     
     // Allows activation and deactivation of camera
     public STATES Start() {
 
-        String currentLocations = this.selectedLocation;
+        String currentLocation = this.selectedLocation;
 
-        if (currentLocations.equalsIgnoreCase("Backyard")){
+        if (currentLocation.equalsIgnoreCase("Backyard")){
             //present image or call other function for presenting images\
             //if fail, return BAD boolean
         }
 
-        if (currentLocations.equalsIgnoreCase("Frontyard")){
+        if (currentLocation.equalsIgnoreCase("Frontyard")){
              //present image or call other function for presenting images
              //if fail, return BAD boolean
         }
         
-        if (currentLocations.equalsIgnoreCase("Pool")){
+        if (currentLocation.equalsIgnoreCase("Pool")){
              //present image or call other function for presenting images
              //if fail, return BAD boolean
         }
 
-        if (currentLocations.equalsIgnoreCase("Front Door")){
+        if (currentLocation.equalsIgnoreCase("Front Door")){
             //present image or call other function for presenting images
             //if fail, return BAD boolean
         }
 
-        if (currentLocations.equalsIgnoreCase("Back Door")){
+        if (currentLocation.equalsIgnoreCase("Back Door")){
             //present image or call other function for presenting images
             //if fail, return BAD boolean
         }
@@ -103,8 +99,8 @@ public class Camera extends Device {
     //Concepts of left and right camera location changing for initial implementation
     public STATES ChangeCamera (boolean right){
 
-        if (right){
-            this.selectedLocation=this.allLocations.get(Camera.numLocation++);  
+        if (right){//If the user presses the right button, move to the next camera location
+            this.selectedLocation=this.allLocations.get(Camera.numLocation++);   
         }
 
         else {
@@ -126,6 +122,24 @@ public class Camera extends Device {
     public  boolean getCameraState(){
 
         return this.isOn;
+    }
+
+    @Override
+    public boolean Set(COMMAND_SET param, String value) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Set'");
+    }
+
+    @Override
+    public String Get(COMMAND_GET param) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+    }
+
+    @Override
+    public String Call(COMMAND_CALL param, String args) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Call'");
     }
 }
 

@@ -1,23 +1,25 @@
 package Managers;
 
-import java.util.ArrayList;
 import Devices.*;
+import Devices.Device.COMMAND_GET;
+import Devices.Device.DEVICE_TYPE;
+import static java.time.temporal.ChronoUnit.valueOf;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+import javax.lang.model.type.UnknownTypeException;
 
 public class FileManager {
     // Read data from file to be turned into devices
-<<<<<<< Updated upstream
-    public static ArrayList<String> Read(String filename) { return new ArrayList<String>(); }
-
-    // Write a device to a file
-    public static boolean Write(String filename, Device device) { return true; }
-=======
     public static String Read(String filename) { 
         
-        // try {
-        //     // File reading stuff here
-        // } catch (FileNotFoundException e ) {
-        //     System.out.println("Error occurred: " + e);
-        // }     
+        try {
+            // File reading stuff here
+        } catch (FileNotFoundException e ) {
+            System.out.println("Error occurred: " + e);
+        }     
 
         return new String(); 
     }
@@ -27,7 +29,7 @@ public class FileManager {
 
         try {
             // Creating a new file to write device information to
-            FileWriter f = new FileWriter("Saved" + filename);
+            FileWriter f = new FileWriter("Saved" + filename + ".txt");
             // Depending on the name of the file, since each device will have it's own file, write specific strings of data
             switch (filename) {
                 case "Alarm":
@@ -94,7 +96,7 @@ public class FileManager {
 
                 case "Thermostat":
                     // Celsius boolean
-                    // f.write(String.valueOf(((Thermostat)device).Get(COMMAND_GET.THERM_CELSIUS)));
+                    f.write(String.valueOf(((Thermostat)device).Get(COMMAND_GET.THERM_CELSIUS)));
                     // Comma seperator for Split(",")
                     f.write(",");
                     // Current temp
@@ -130,5 +132,4 @@ public class FileManager {
             return false;
         }
     }
->>>>>>> Stashed changes
 }

@@ -14,21 +14,24 @@ public class Thermostat extends Device {
         this.targetHumidity = targetHumid;
         // Temperature default is 20
         this.targetTemperature = targetTemp;
+
+        this.temperature = targetTemp;
+        this.humidity = targetHumid;
     }
 
     // Inherited methods
-    public STATES Check() {
+    public String Check() {
         
         // if the temperature matches the target temperature, return good
-        if ( targetTemperature == this.temperature ) return STATES.GOOD;
+        if ( targetTemperature == this.temperature ) return STATES.GOOD.toString();
 
         // if the humidity matches the target humidity, return good
-        if ( targetHumidity == this.humidity ) return STATES.GOOD;
+        if ( targetHumidity == this.humidity ) return STATES.GOOD.toString();
 
 
         // todo: if UI button for unit change matches the current unit selected, return STATES.GOOD
 
-        return STATES.ERROR_UNKNOWN; 
+        return STATES.ERROR_UNKNOWN.toString(); 
     }
     
     // Change the unit of measurement for temperature
@@ -68,12 +71,14 @@ public class Thermostat extends Device {
     private void ChangeTemperature(boolean newUnit) {
         // if the current unit is fahrenheit, convert the current temperature (assumed celsius) to fahrenheit
         if (!newUnit){
-            this.temperature = ((9/5) * temperature + 32);
+            this.temperature = (((double)9/5) * temperature + 32);
+            this.targetTemperature = (((double)9/5) * targetTemperature + 32);
         }
 
         // if the current unit is celsius, convert the current temperature (assumed fahrenheit) to fahrenheit
         if (newUnit){
-            this.temperature = ((5/9) * (temperature - 32));
+            this.temperature = (((double)5/9) * (temperature - 32));
+            this.targetTemperature = (((double)5/9) * (targetTemperature - 32));
         }
     }
 
@@ -82,12 +87,78 @@ public class Thermostat extends Device {
 
         // set the new temperature to the target
         // this can be implemented in a fancier way, but is out of scope for now.
-        this.temperature = target;
+        this.targetTemperature = target;
+        return STATES.GOOD; 
+    }
+
+    public STATES SetTemperature(double temp) { 
+
+        // set the new temperature to the target
+        // this can be implemented in a fancier way, but is out of scope for now.
+        this.temperature = temp;
         return STATES.GOOD; 
     }
 
     public STATES SetTargetHumidity(double target) { 
-        this.humidity = target;
+        this.targetHumidity = target;
         return STATES.GOOD; 
+    }
+
+    public STATES SetHumidity(double humid) { 
+        this.humidity = humid;
+        return STATES.GOOD; 
+    }
+
+    // Getters yaya
+    public boolean getUnit() {
+        return celsius;
+    }
+
+    public double getTemp() {
+        return temperature;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public double getTargetTemp() {
+        return targetTemperature;
+    }
+    public double getTargetHumid() {
+        return targetHumidity;
+    }
+
+    @Override
+    public boolean Set(COMMAND_SET param, String value) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Set'");
+    }
+
+    @Override
+    public String Get(COMMAND_GET param) {
+        // Getting temp
+        if ( param == COMMAND_GET.THERM_TEMPERATURE) {
+            return String.valueOf(this.temperature);
+
+        // Getting humidity    
+        } else if ( param == COMMAND_GET.THERM_HUMIDITY ) {
+            return String.valueOf(humidity);
+
+        // Getting target temperature    
+        } else if ( param == COMMAND_GET.THERM_TARGET_TEMP ) {
+            return String.valueOf(targetTemperature);
+
+        // Getting target humidity       
+        } else if ( param == COMMAND_GET.THERM_TARGET_HUMID ) {
+            return String.valueOf(targetHumidity);
+        }
+        return null;
+    }
+
+    @Override
+    public String Call(COMMAND_CALL param, String args) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Call'");
     }
 }
