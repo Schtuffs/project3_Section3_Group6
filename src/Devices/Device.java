@@ -64,10 +64,6 @@ public abstract class Device {
 
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
-
-        // Thermo
-        THERM_TEMPERATURE, THERM_HUMIDITY, THERM_TARGET_TEMP, THERM_TARGET_HUMID, THERM_CELSIUS,
-
         // Smoke Detector
         SD_IS_SMOKEY, 
 

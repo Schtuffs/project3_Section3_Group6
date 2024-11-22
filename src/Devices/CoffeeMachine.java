@@ -178,38 +178,20 @@ public class CoffeeMachine extends Device {
     
     public boolean Set(COMMAND_SET param, String value) {
         
-        /*  WAS NOT WORKING
         switch (param) {
-        case COMMAND_SET.BEAN_FLAVOUR:
+        case BEAN_FLAVOUR:
             return this.SetBeanFlavour(value);
-        case COMMAND_SET.BEAN_ADD:
+        case BEAN_ADD:
             return this.SetBeansLeft(value);
-        case COMMAND_SET.BEAN_NEW:
+        case BEAN_NEW:
             return this.SetNewBean(value);
-        case COMMAND_SET.BEAN_MAKETIME:
+        case BEAN_MAKETIME:
             return this.SetBeanMakeTime(value);
-        case COMMAND_SET.BEAN_DAYS:
+        case BEAN_DAYS:
             return this.SetNewDays(value);
         default:
             return false;
         }
-        */
-        if (param==COMMAND_SET.BEAN_FLAVOUR) {
-            return this.SetBeanFlavour(value);
-        }
-        else if (param==COMMAND_SET.BEAN_ADD) {
-            return this.SetBeansLeft(value);
-        }
-        else if (param==COMMAND_SET.BEAN_NEW) {
-            return this.SetNewBean(value);
-        }
-        else if (param==COMMAND_SET.BEAN_MAKETIME) {
-            return this.SetBeanMakeTime(value);
-        }
-        else if (param==COMMAND_SET.BEAN_DAYS) {
-            return this.SetNewDays(value);
-        }
-        else { return false; }
     }
 
     private boolean SetBeanFlavour(String newFlavour) {
@@ -283,53 +265,24 @@ public class CoffeeMachine extends Device {
     }
     
     public String Get(COMMAND_GET param) {
-        /* 
-        String result;
         switch (param) {
-        case COMMAND_GET.BEAN_FLAVOUR:
-            result = this.selectedFlavour;
-            break;
-        case COMMAND_GET.BEAN_LEFT:
-            result = this.beansRemaining.get(this.selectedFlavour).toString();
-            break;
-        case COMMAND_GET.BEAN_BREWTIME:
-            result = this.brewTimes.get(this.selectedFlavour).toString();
-            break;
-        case COMMAND_GET.BEAN_BREWTIMELEFT:
-            result = this.brewTimeLeft.toString();
-            break;
-        case COMMAND_GET.BEAN_BREWCOST:
-            result = this.beanBrewCost.get(this.selectedFlavour).toString();
-            break;
-        case COMMAND_GET.BEAN_MAKETIME:
-            result = this.userMakeTime.toString();
-            break;
-        case COMMAND_GET.BEAN_DAYS:
+        case BEAN_FLAVOUR:
+            return this.selectedFlavour;
+        case BEAN_LEFT:
+            return this.beansRemaining.get(this.selectedFlavour).toString();
+        case BEAN_BREWTIME:
+            return this.brewTimes.get(this.selectedFlavour).toString();
+        case BEAN_BREWTIMELEFT:
+            return this.brewTimeLeft.toString();
+        case BEAN_BREWCOST:
+            return this.beanBrewCost.get(this.selectedFlavour).toString();
+        case BEAN_MAKETIME:
+            return this.userMakeTime.toString();
+        case BEAN_DAYS:
             return this.GetBrewDays();
         default:
-            result = STATES.ERROR_UNKNOWN.toString();
+            return STATES.ERROR_UNKNOWN.toString();
         }
-        return result;
-        */
-        String result;
-        if (param == COMMAND_GET.BEAN_FLAVOUR) {
-            result = this.selectedFlavour;
-        } else if (param == COMMAND_GET.BEAN_LEFT) {
-            result = this.beansRemaining.get(this.selectedFlavour).toString();
-        } else if (param == COMMAND_GET.BEAN_BREWTIME) {
-            result = this.brewTimes.get(this.selectedFlavour).toString();
-        } else if (param == COMMAND_GET.BEAN_BREWTIMELEFT) {
-            result = this.brewTimeLeft.toString();
-        } else if (param == COMMAND_GET.BEAN_BREWCOST) {
-            result = this.beanBrewCost.get(this.selectedFlavour).toString();
-        } else if (param == COMMAND_GET.BEAN_MAKETIME) {
-            result = this.userMakeTime.toString();
-        } else if (param == COMMAND_GET.BEAN_DAYS) {
-            return this.GetBrewDays();
-        } else {
-            result = STATES.ERROR_UNKNOWN.toString();
-        }
-        return result;
     }
 
     private String GetBrewDays() {
@@ -348,35 +301,14 @@ public class CoffeeMachine extends Device {
     }
 
     public String Call(COMMAND_CALL param, String args) {
-        // Default good
-        STATES state = STATES.GOOD;
-
-        /* 
         switch(param) {
         case COMMAND_CALL.START:
-            state = this.Start();
-            break;
+            return this.Start().toString();
         case COMMAND_CALL.STOP:
-            state = this.Stop();
-            break;
+            return this.Stop().toString();
         default:
-            state = STATES.ERROR_UNKNOWN;
-            break;
+            return STATES.ERROR_UNKNOWN.toString();
         }
-            */
-        if (param==COMMAND_CALL.START) {
-            state = this.Start();
-        }
-        else if (param==COMMAND_CALL.STOP) {
-            state = this.Stop();
-            
-        }
-        else {
-            state = STATES.ERROR_UNKNOWN;
-        }
-
-
-        return state.toString();
     }
 
     // CoffeeMachine specific functions
