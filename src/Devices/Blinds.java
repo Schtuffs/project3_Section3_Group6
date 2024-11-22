@@ -5,15 +5,20 @@ import java.time.LocalTime;
 
 public class Blinds extends Device {
     private boolean isOpen;
-    private static LocalTime openTime;
-    private static LocalTime closeTime;
+    private LocalTime openTime;
+    private LocalTime closeTime;
 
     public Blinds(LocalTime oTime, LocalTime cTime) {
       
         setCloseTime(cTime);
         setOpenTime(oTime);
 
+        this.openTime = oTime;
+        this.closeTime = cTime;
+
+
     }
+
     
     // Inherited methods
     public String Check() { 
@@ -21,7 +26,7 @@ public class Blinds extends Device {
         LocalTime current = LocalTime.now();
         current = current.minusNanos(current.getNano());
 
-        if (current.equals(Blinds.openTime) && !this.isOpen) {
+        if (current.equals(this.openTime) && !this.isOpen) {
             // If not open, open
             if (!this.isOpen) {
                 return this.Open().toString();
@@ -32,11 +37,23 @@ public class Blinds extends Device {
         return STATES.GOOD.toString(); }
     
         public void setCloseTime(LocalTime cTime){
-            Blinds.closeTime=cTime;
+            this.closeTime=cTime;
         }
 
         public void setOpenTime(LocalTime oTime){
-            Blinds.openTime=oTime;
+            this.openTime=oTime;
+        }
+
+        public LocalTime getOpenTime() {
+            return this.openTime;
+        }
+
+        public LocalTime getCloseTime() {
+            return this.closeTime;
+        }
+
+        public boolean getIsOpen() {
+            return this.isOpen;
         }
 
     // Allows remote control of blinds
