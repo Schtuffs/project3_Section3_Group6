@@ -71,14 +71,14 @@ public class Thermostat extends Device {
     private void ChangeTemperature(boolean newUnit) {
         // if the current unit is fahrenheit, convert the current temperature (assumed celsius) to fahrenheit
         if (!newUnit){
-            this.temperature = ((9/5) * temperature + 32);
-            this.targetTemperature = ((9/5) * targetTemperature + 32);
+            this.temperature = ((9.0/5.0) * temperature + 32);
+            this.targetTemperature = ((9.0/5.0) * targetTemperature + 32);
         }
 
         // if the current unit is celsius, convert the current temperature (assumed fahrenheit) to fahrenheit
         if (newUnit){
-            this.temperature = ((5/9) * (temperature - 32));
-            this.targetTemperature = ((5/9) * (targetTemperature - 32));
+            this.temperature = ((5.0/9.0) * (temperature - 32));
+            this.targetTemperature = ((5.0/9.0) * (targetTemperature - 32));
         }
     }
 

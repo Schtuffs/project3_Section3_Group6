@@ -26,11 +26,11 @@ public class FileManager {
             }
             // Closing the file
             s.close();
-            // File reading stuff here
+
         } catch (IOException e ) {
             System.out.println("Error occurred: " + e);
         }     
-
+        // Return contents of the file
         return buf; 
     }
 
