@@ -33,6 +33,7 @@ public class WindowManager {
     // This gonna be used to prevent stuff like blinds from checking their state every frame instead of every second
     private boolean check;
     private LocalTime prev_time;
+    private Timer timer;
     
 
     private enum SCREENS {
@@ -84,6 +85,9 @@ public class WindowManager {
         this.window.setSize(this.width, this.height);
         // this.window.setMinimumSize(min_size);
         this.window.setVisible(true);
+
+        // For some reason, this is required to get the window to display on start up without the user needing to resize the window before the components are displayed 
+        this.window.setSize(new Dimension(this.width+1, this.height));
 
         // Add items to the panel
         this.SetupTop();
@@ -237,6 +241,7 @@ public class WindowManager {
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                timer.stop();
                 WindowManager.this.window.dispose();
             }
         });
@@ -809,7 +814,7 @@ public class WindowManager {
         // Button to decrement hour
         JButton s_decrementHourOpen = new JButton("˅");
 
-        s_incrementHourOpen.addActionListener(new ActionListener() {
+        s_decrementHourOpen.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1305,7 +1310,7 @@ public class WindowManager {
         // Creates a timer that runs FPS times every second
         //
         // Honestly, I dont think the FPS logic is right, Im not thinking rn, but it works
-        Timer timer = new Timer((int)(MS_PER_SECOND/FPS), new ActionListener() {
+        timer = new Timer((int)(MS_PER_SECOND/FPS), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1330,15 +1335,17 @@ public class WindowManager {
                     LocalTime.now().getMinute()==blinds.getOpenTime().getMinute() && 
                     LocalTime.now().getSecond()==blinds.getOpenTime().getSecond() &&
                     blinds.getIsOpen()==false) {
-                    blinds.Open();
-                    openClose.setText("Close");
+                    openClose.doClick();
+                    // blinds.Open();
+                    // openClose.setText("Close");
                 }
                 else if (LocalTime.now().getHour()==blinds.getCloseTime().getHour() &&
                     LocalTime.now().getMinute()==blinds.getCloseTime().getMinute() && 
                     LocalTime.now().getSecond()==blinds.getCloseTime().getSecond() &&
                     blinds.getIsOpen()) {
-                    blinds.Close();
-                    openClose.setText("Open");
+                    openClose.doClick();
+                    // blinds.Close();
+                    // openClose.setText("Open");
                 }
 
 
@@ -1367,7 +1374,7 @@ public class WindowManager {
                 // Randomly change values
                // System.out.println(thermostat.getTargetTemp()+"  "+thermostat.getTemp());
                 if (thermostat.getTargetTemp()!=thermostat.getTemp()) {
-                    int rand = ((int) (Math.random() * 40 + 1));
+                    int rand = ((int) (Math.random() * 100 + 1));
                     if (rand==1 && thermostat.getTargetTemp()>thermostat.getTemp()) {
                         thermostat.SetTemperature(thermostat.getTemp()+0.1);
                     }
@@ -1376,7 +1383,7 @@ public class WindowManager {
                     }
                 }
                 if (thermostat.getTargetHumid()!=thermostat.getHumidity()) {
-                    int rand = ((int) (Math.random() * 40 + 1));
+                    int rand = ((int) (Math.random() * 100 + 1));
                     if (rand==1 && thermostat.getTargetHumid()>thermostat.getHumidity()) {
                         thermostat.SetHumidity(thermostat.getHumidity()+0.1);
                     }
