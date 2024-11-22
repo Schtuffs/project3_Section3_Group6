@@ -3,14 +3,11 @@ package Managers;
 import Devices.*;
 import Devices.Device.COMMAND_GET;
 import Devices.Device.DEVICE_TYPE;
-
 import static java.time.temporal.ChronoUnit.valueOf;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-
 import javax.lang.model.type.UnknownTypeException;
 
 public class FileManager {
@@ -19,14 +16,9 @@ public class FileManager {
         
         try {
             // File reading stuff here
-
         } catch (FileNotFoundException e ) {
             System.out.println("Error occurred: " + e);
-
-        }
-        
-        
-
+        }     
 
         return new String(); 
     }
@@ -125,9 +117,9 @@ public class FileManager {
                 default:
                     // Otherwise, something brokey!
                     System.out.println("There was an error writing the file: Please double check that your filename syntax is correct!");
-                   return false;   
-            }
+                    return false;   
 
+            }
             // Close the file
             f.close();
             // The file was successfully written to, return true
@@ -138,7 +130,5 @@ public class FileManager {
             // Something went wrong; return false
             return false;
         }
-    
-
     }
 }
