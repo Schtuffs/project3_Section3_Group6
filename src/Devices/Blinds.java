@@ -12,6 +12,7 @@ public class Blinds extends Device {
       
         setCloseTime(cTime);
         setOpenTime(oTime);
+        isOpen=false;
 
         this.openTime = oTime;
         this.closeTime = cTime;

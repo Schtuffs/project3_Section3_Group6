@@ -74,6 +74,29 @@ public class Shower extends Device {
         }
         return false;
     }
+
+    public boolean SetHeadPattern(int index) {
+        try {
+            this.headPattern = this.allHeadPatterns.get(index);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String GetHeadPattern(int index) {
+        try {
+            return this.allHeadPatterns.get(index);
+        }
+        catch (Exception e) {
+            return "";
+        }
+    }
+
+    public int GetPatternCount() {
+        return this.allHeadPatterns.size();
+    }
     
     public String Get(COMMAND_GET param) {
         // switch (param) {
