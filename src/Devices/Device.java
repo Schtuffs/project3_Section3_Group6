@@ -57,8 +57,16 @@ public abstract class Device {
           
         // Coffee Machine, bean related
         BEAN_FLAVOUR, BEAN_LEFT, BEAN_BREWTIME, BEAN_MAKETIME, BEAN_BREWTIMELEFT, BEAN_BREWCOST, BEAN_DAYS,
+
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+
+        // Smoke Detector
+        IS_SMOKEY,
+
+        // Thermostat
+        TEMPERATURE, HUMIDITY, TARGET_TEMP, TARGET_HUMID, CELSIUS,
+        
         // All
         UNKNOWN
     }

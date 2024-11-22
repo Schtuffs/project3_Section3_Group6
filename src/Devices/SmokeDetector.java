@@ -34,8 +34,12 @@ public class SmokeDetector extends Device {
 
     @Override
     public String Get(COMMAND_GET param) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+        // Getting isSmokey
+        if ( param == COMMAND_GET.SD_IS_SMOKEY ) {
+            return String.valueOf(this.isSmokey);
+        }
+
+        return null;
     }
 
     @Override

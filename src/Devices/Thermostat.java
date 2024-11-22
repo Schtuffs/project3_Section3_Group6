@@ -119,8 +119,23 @@ public class Thermostat extends Device {
 
     @Override
     public String Get(COMMAND_GET param) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+        // Getting temp
+        if ( param == COMMAND_GET.THERM_TEMPERATURE) {
+            return String.valueOf(this.temperature);
+
+        // Getting humidity    
+        } else if ( param == COMMAND_GET.THERM_HUMIDITY ) {
+            return String.valueOf(humidity);
+
+        // Getting target temperature    
+        } else if ( param == COMMAND_GET.THERM_TARGET_TEMP ) {
+            return String.valueOf(targetTemperature);
+
+        // Getting target humidity       
+        } else if ( param == COMMAND_GET.THERM_TARGET_HUMID ) {
+            return String.valueOf(targetHumidity);
+        }
+        return null;
     }
 
     @Override
