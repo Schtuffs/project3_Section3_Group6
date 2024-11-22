@@ -2,26 +2,36 @@ package Managers;
 
 import Devices.*;
 import Devices.Device.COMMAND_GET;
-import Devices.Device.DEVICE_TYPE;
 import static java.time.temporal.ChronoUnit.valueOf;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import javax.lang.model.type.UnknownTypeException;
 
 public class FileManager {
     // Read data from file to be turned into devices
     public static String Read(String filename) { 
+        // String buffer
+        String buf = "";
         
         try {
+            // File to be read
+            File f = new File(filename);
+            // Scanner to read files
+            Scanner s = new Scanner(f);
+            // Reading until file ends
+            while (s.hasNextLine()) {
+                // Storing the file contents in the buffer
+                buf = s.nextLine();
+            }
+            // Closing the file
+            s.close();
             // File reading stuff here
-        } catch (FileNotFoundException e ) {
+        } catch (IOException e ) {
             System.out.println("Error occurred: " + e);
         }     
 
-        return new String(); 
+        return buf; 
     }
 
     // Write a device to a file, return true/false if this file was able to be written to
@@ -44,7 +54,7 @@ public class FileManager {
                 case "Blinds":
                     // can't finish implementing yet, enums not written
                     // f.write(String.valueOf(((Blinds)device).Get(COMMAND_GET.BLINDS_IS_OPEN))));
-                    break;\
+                    break;
 
                 case "Camera":
                     // can't finish implementing yet, enums not written
@@ -117,6 +127,7 @@ public class FileManager {
 
                 default:
                     // Otherwise, something brokey!
+                    f.close();
                     System.out.println("There was an error writing the file: Please double check that your filename syntax is correct!");
                     return false;   
 

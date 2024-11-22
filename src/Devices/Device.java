@@ -42,6 +42,7 @@ public abstract class Device {
         BEAN_FLAVOUR, BEAN_NEW, BEAN_ADD, BEAN_MAKETIME, BEAN_DAYS,
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+
         // All
         UNKNOWN
 
@@ -62,10 +63,10 @@ public abstract class Device {
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
 
         // Smoke Detector
-        IS_SMOKEY,
+        SD_IS_SMOKEY,
 
         // Thermostat
-        TEMPERATURE, HUMIDITY, TARGET_TEMP, TARGET_HUMID, CELSIUS,
+        THERM_TEMPERATURE, THERM_HUMIDITY, THERM_TARGET_TEMP, THERM_TARGET_HUMID, THERM_CELSIUS,
         
         // All
         UNKNOWN
