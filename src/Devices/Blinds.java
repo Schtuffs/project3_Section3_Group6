@@ -16,7 +16,7 @@ public class Blinds extends Device {
     }
     
     // Inherited methods
-    public STATES Check() { 
+    public String Check() { 
 
         LocalTime current = LocalTime.now();
         current = current.minusNanos(current.getNano());
@@ -24,12 +24,12 @@ public class Blinds extends Device {
         if (current.equals(Blinds.openTime) && !this.isOpen) {
             // If not open, open
             if (!this.isOpen) {
-                return this.Open();
+                return this.Open().toString();
             }
             
         }
         
-        return STATES.GOOD; }
+        return STATES.GOOD.toString(); }
     
         public void setCloseTime(LocalTime cTime){
             Blinds.closeTime=cTime;
@@ -49,4 +49,22 @@ public class Blinds extends Device {
         this.isOpen = false;
         //void public animationFunctionOrSomething();
         return STATES.GOOD; }
+
+    @Override
+    public boolean Set(COMMAND_SET param, String value) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Set'");
+    }
+
+    @Override
+    public String Get(COMMAND_GET param) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+    }
+
+    @Override
+    public String Call(COMMAND_CALL param, String args) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Call'");
+    }
 }

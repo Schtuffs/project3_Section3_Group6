@@ -17,18 +17,18 @@ public class Thermostat extends Device {
     }
 
     // Inherited methods
-    public STATES Check() {
+    public String Check() {
         
         // if the temperature matches the target temperature, return good
-        if ( targetTemperature == this.temperature ) return STATES.GOOD;
+        if ( targetTemperature == this.temperature ) return STATES.GOOD.toString();
 
         // if the humidity matches the target humidity, return good
-        if ( targetHumidity == this.humidity ) return STATES.GOOD;
+        if ( targetHumidity == this.humidity ) return STATES.GOOD.toString();
 
 
         // todo: if UI button for unit change matches the current unit selected, return STATES.GOOD
 
-        return STATES.ERROR_UNKNOWN; 
+        return STATES.ERROR_UNKNOWN.toString(); 
     }
     
     // Change the unit of measurement for temperature
@@ -89,5 +89,23 @@ public class Thermostat extends Device {
     public STATES SetTargetHumidity(double target) { 
         this.humidity = target;
         return STATES.GOOD; 
+    }
+
+    @Override
+    public boolean Set(COMMAND_SET param, String value) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Set'");
+    }
+
+    @Override
+    public String Get(COMMAND_GET param) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+    }
+
+    @Override
+    public String Call(COMMAND_CALL param, String args) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Call'");
     }
 }

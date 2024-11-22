@@ -53,12 +53,12 @@ public class Camera extends Device {
     }
 
     // Inherited methods
-    public STATES Check() { 
+    public String Check() { 
         // Camera current;
         // if (current.isOn==true){
         //     return STATES.GOOD;
         // }
-        return STATES.GOOD;
+        return STATES.GOOD.toString();
     }
     
     
@@ -122,6 +122,24 @@ public class Camera extends Device {
     public  boolean getCameraState(){
 
         return this.isOn;
+    }
+
+    @Override
+    public boolean Set(COMMAND_SET param, String value) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Set'");
+    }
+
+    @Override
+    public String Get(COMMAND_GET param) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+    }
+
+    @Override
+    public String Call(COMMAND_CALL param, String args) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Call'");
     }
 }
 
