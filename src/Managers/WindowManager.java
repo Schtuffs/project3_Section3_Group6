@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import Devices.*;
 
@@ -21,12 +22,31 @@ public class WindowManager {
     private CardLayout cards;
     private JPanel center;
 
+    //
+    private final int FPS = 60;
+    private final int MS_PER_SECOND = 1000;
+
+    // This gonna be used to prevent stuff like blinds from checking their state every frame instead of every second
+    private boolean check;
+    private LocalTime prev_time;
+    
+
     private enum SCREENS {
         SCREEN_MAIN, SCREEN_ALARM, SCREEN_BLINDS, SCREEN_CAMERA, SCREEN_COFFEE, SCREEN_SENSOR, SCREEN_SHOWER, SCREEN_SMOKE, SCREEN_THERMO
     };
 
+    private Alarm alarm;
+    private Sensor sensor;
+    private CoffeeMachine coffeeMachine;
+    private Camera camera;
+    private Shower shower;
+    private SmokeDetector smokeDetector;
+    private Blinds blinds;
+    private Thermostat thermostat;
+
+
     private SCREENS screen;
-    
+
     public WindowManager() {
         // Setup private variables
         this.width = 1600;
@@ -37,6 +57,16 @@ public class WindowManager {
         this.cards = new CardLayout();
         this.center = new JPanel();
         this.center.setLayout(this.cards);
+
+        // for Timer purposes
+        this.check = false;
+        this.prev_time = LocalTime.now();
+
+        // These are here for now to get the GUI running for usability testing
+        alarm = new Alarm();
+        blinds = new Blinds(LocalTime.parse("06:00:00"), LocalTime.parse("18:00:00"));
+        shower = new Shower();
+        sensor = new Sensor(false, false, LocalTime.parse("06:00:00"), LocalTime.parse("06:00:00"), alarm);
 
         // Create window
         this.window.getContentPane().setBackground(Color.DARK_GRAY);
@@ -53,6 +83,9 @@ public class WindowManager {
         this.SetupRight();
         this.SetupBottom();
         this.SetupCenter();
+
+
+
     }
 
     // Displays a selected screen
@@ -99,6 +132,8 @@ public class WindowManager {
 
         // JButtons for each class
         JButton alarmButton  = new JButton("Alarm");
+        alarmButton.setBackground(Color.white);
+        alarmButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         alarmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -107,6 +142,8 @@ public class WindowManager {
         });
         
         JButton blindsButton = new JButton("Blinds");
+        blindsButton.setBackground(Color.white);
+        blindsButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         blindsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -115,6 +152,8 @@ public class WindowManager {
         });
 
         JButton cameraButton = new JButton("Camera");
+        cameraButton.setBackground(Color.white);
+        cameraButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         cameraButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -123,6 +162,8 @@ public class WindowManager {
         });
 
         JButton coffeeButton = new JButton("Coffee Machine");
+        coffeeButton.setBackground(Color.white);
+        coffeeButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         coffeeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,6 +172,8 @@ public class WindowManager {
         });
 
         JButton sensorButton = new JButton("Sensors");
+        sensorButton.setBackground(Color.white);
+        sensorButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         sensorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -139,6 +182,8 @@ public class WindowManager {
         });
 
         JButton showerButton = new JButton("Shower");
+        showerButton.setBackground(Color.white);
+        showerButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         showerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,6 +192,8 @@ public class WindowManager {
         });
 
         JButton smokeButton  = new JButton("Smoke Detector");
+        smokeButton.setBackground(Color.white);
+        smokeButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         smokeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,6 +202,8 @@ public class WindowManager {
         });
 
         JButton thermoButton = new JButton("Thermostat");
+        thermoButton.setBackground(Color.white);
+        thermoButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         thermoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -163,6 +212,8 @@ public class WindowManager {
         });
 
         JButton homeButton   = new JButton("Home");
+        homeButton.setBackground(Color.white);
+        homeButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -173,6 +224,8 @@ public class WindowManager {
 
         // Close button as well
         JButton closeButton = new JButton("Close");
+        closeButton.setBackground(Color.white);
+        closeButton.setFont(new Font("Silkscreen",Font.PLAIN,24));
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -235,6 +288,18 @@ public class WindowManager {
 
         // Button to Stop the Alarm
         JButton stopAlarm = new JButton("STOP");
+
+        stopAlarm.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                alarm.StopAlarm();
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 3;
@@ -274,6 +339,18 @@ public class WindowManager {
 
         // Button to increment hour
         JButton incrementHourOpen = new JButton("^");
+
+        incrementHourOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setOpenTime(blinds.getOpenTime().plusHours(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 2;
@@ -284,6 +361,18 @@ public class WindowManager {
 
         // Button to increment minute
         JButton incrementMinuteOpen = new JButton("^");
+
+        incrementMinuteOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setOpenTime(blinds.getOpenTime().plusMinutes(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 2;
@@ -293,6 +382,18 @@ public class WindowManager {
 
         // Button to increment second
         JButton incrementSecondOpen = new JButton("˄");
+
+        incrementSecondOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setOpenTime(blinds.getOpenTime().plusSeconds(1));
+
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 2;
@@ -301,7 +402,8 @@ public class WindowManager {
         blindPanel.add(incrementSecondOpen, c);
 
         // Display the Open Time 
-        JTextField openTimeDisplay = new JTextField("00:00:00");
+        System.out.println(blinds.getOpenTime());
+        JTextField openTimeDisplay = new JTextField(blinds.getOpenTime().toString());
         openTimeDisplay.setFont(null);
         openTimeDisplay.setEditable(false);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -314,6 +416,18 @@ public class WindowManager {
 
         // Button to decrement hour
         JButton decrementHourOpen = new JButton("˅");
+
+        decrementHourOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setOpenTime(blinds.getOpenTime().minusHours(1));
+
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 4;
@@ -324,6 +438,18 @@ public class WindowManager {
 
         // Button to decrement hour
         JButton decrementMinuteOpen = new JButton("˅");
+
+        decrementMinuteOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setOpenTime(blinds.getOpenTime().minusMinutes(1));
+
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 4;
@@ -335,6 +461,18 @@ public class WindowManager {
 
         // Button to decrement second
         JButton decrementSecondOpen = new JButton("˅");
+
+        decrementSecondOpen.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setOpenTime(blinds.getOpenTime().minusSeconds(1));
+
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 4;
@@ -355,6 +493,18 @@ public class WindowManager {
 
         // Button to increment hour
         JButton incrementHourClose = new JButton("^");
+
+        incrementHourClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setCloseTime(blinds.getCloseTime().plusHours(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 6;
@@ -365,6 +515,18 @@ public class WindowManager {
 
         // Button to increment minute
         JButton incrementMinuteClose = new JButton("^");
+
+        incrementMinuteClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setCloseTime(blinds.getCloseTime().plusMinutes(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 6;
@@ -374,6 +536,18 @@ public class WindowManager {
 
         // Button to increment second
         JButton incrementSecondClose = new JButton("˄");
+
+        incrementSecondClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setCloseTime(blinds.getCloseTime().plusSeconds(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 6;
@@ -395,6 +569,18 @@ public class WindowManager {
 
         // Button to decrement hour
         JButton decrementHourClose = new JButton("˅");
+
+        decrementHourClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setCloseTime(blinds.getCloseTime().minusHours(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 8;
@@ -405,6 +591,18 @@ public class WindowManager {
 
         // Button to decrement hour
         JButton decrementMinuteClose = new JButton("˅");
+
+        decrementMinuteClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setCloseTime(blinds.getCloseTime().minusMinutes(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 8;
@@ -416,6 +614,18 @@ public class WindowManager {
 
         // Button to decrement second
         JButton decrementSecondClose = new JButton("˅");
+
+        decrementSecondClose.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                blinds.setCloseTime(blinds.getCloseTime().minusSeconds(1));
+                
+            }
+            
+        });
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 8;
@@ -756,5 +966,79 @@ public class WindowManager {
 
         // Set this center panel to the window
         this.window.add(this.center, BorderLayout.CENTER);
+
+
+        // Creates a timer that runs FPS times every second
+        //
+        // Honestly, I dont think the FPS logic is right, Im not thinking rn, but it works
+        Timer timer = new Timer((int)(MS_PER_SECOND/FPS), new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                // Alarm stuff
+                if (alarm.GetIsBeeping()) {
+                    stopAlarm.setVisible(true);
+                } 
+                else {stopAlarm.setVisible(false);}
+
+
+
+
+
+                // Camera Stuff
+
+
+
+
+
+                // Blinds Stuff
+
+
+
+
+
+
+                // Thermostat Stuff
+
+
+
+
+
+                // Smoke Detector Stuff
+                int rand = ((int) (Math.random() * 4 + 1));
+
+
+
+
+
+
+                // Shower Stuff
+
+
+
+
+
+
+
+                // Coffee Machine Stuff
+
+
+
+
+
+
+
+
+
+                // Sensor stuff
+                openTimeDisplay.setText(blinds.getOpenTime().toString());
+                closeTimeDisplay.setText(blinds.getCloseTime().toString());
+            }
+
+        } );
+        timer.setRepeats(true);
+        timer.start();
+
     }
 }

@@ -18,6 +18,14 @@ public class SmokeDetector extends Device {
         return STATES.GOOD.toString(); 
     }
 
+    public void SetIsSmokey(boolean isSmokey) {
+        this.isSmokey = isSmokey;
+    }
+
+    public boolean GetIsSmokey() {
+        return isSmokey;
+    }
+
     @Override
     public boolean Set(COMMAND_SET param, String value) {
         // TODO Auto-generated method stub

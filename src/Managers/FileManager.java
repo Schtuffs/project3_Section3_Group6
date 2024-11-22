@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class FileManager {
     // Read data from file to be turned into devices
+
     public static String Read(String filename) { 
         
         try {
@@ -56,7 +57,6 @@ public class FileManager {
             // Something went wrong; return false
             return false;
         }
-    
 
     }
 }
