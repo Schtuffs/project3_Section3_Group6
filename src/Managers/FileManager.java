@@ -39,7 +39,9 @@ public class FileManager {
 
         try {
             // Creating a new file to write device information to
-            FileWriter f = new FileWriter("Saved" + filename);
+            // Second param is false for no appending; this means the file is wiped every time Write() is called.
+            // This is important because there should only be one string in the file no matter how many times it is updated.
+            FileWriter f = new FileWriter("Saved/" + filename, false);
             // Depending on the name of the file, since each device will have it's own file, write specific strings of data
             switch (filename) {
                 case "Alarm":
