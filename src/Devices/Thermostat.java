@@ -91,6 +91,26 @@ public class Thermostat extends Device {
         return STATES.GOOD; 
     }
 
+    // Getters yaya
+    public boolean getUnit() {
+        return celsius;
+    }
+
+    public double getTemp() {
+        return temperature;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public double getTargetTemp() {
+        return targetTemperature;
+    }
+    public double getTargetHumid() {
+        return targetHumidity;
+    }
+
     @Override
     public boolean Set(COMMAND_SET param, String value) {
         // TODO Auto-generated method stub
