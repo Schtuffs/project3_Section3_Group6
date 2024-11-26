@@ -358,7 +358,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setOpenTime(blinds.getOpenTime().plusHours(1));
+                blinds.setOpenTime((blinds.getOpenTime().plusHours(1)).toString());
                 
             }
             
@@ -380,7 +380,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setOpenTime(blinds.getOpenTime().plusMinutes(1));
+                blinds.setOpenTime((blinds.getOpenTime().plusMinutes(1)).toString());
                 
             }
             
@@ -401,7 +401,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setOpenTime(blinds.getOpenTime().plusSeconds(1));
+                blinds.setOpenTime((blinds.getOpenTime().plusSeconds(1)).toString());
 
             }
             
@@ -435,7 +435,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setOpenTime(blinds.getOpenTime().minusHours(1));
+                blinds.setOpenTime((blinds.getOpenTime().minusHours(1)).toString());
 
             }
             
@@ -457,7 +457,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setOpenTime(blinds.getOpenTime().minusMinutes(1));
+                blinds.setOpenTime((blinds.getOpenTime().minusMinutes(1)).toString());
 
             }
             
@@ -480,7 +480,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setOpenTime(blinds.getOpenTime().minusSeconds(1));
+                blinds.setOpenTime((blinds.getOpenTime().minusSeconds(1)).toString());
 
             }
             
@@ -512,7 +512,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setCloseTime(blinds.getCloseTime().plusHours(1));
+                blinds.setCloseTime((blinds.getCloseTime().plusHours(1)).toString());
                 
             }
             
@@ -534,7 +534,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setCloseTime(blinds.getCloseTime().plusMinutes(1));
+                blinds.setCloseTime((blinds.getCloseTime().plusMinutes(1)).toString());
                 
             }
             
@@ -555,7 +555,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setCloseTime(blinds.getCloseTime().plusSeconds(1));
+                blinds.setCloseTime((blinds.getCloseTime().plusSeconds(1)).toString());
                 
             }
             
@@ -588,7 +588,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setCloseTime(blinds.getCloseTime().minusHours(1));
+                blinds.setCloseTime((blinds.getCloseTime().minusHours(1)).toString());
                 
             }
             
@@ -610,7 +610,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setCloseTime(blinds.getCloseTime().minusMinutes(1));
+                blinds.setCloseTime((blinds.getCloseTime().minusMinutes(1)).toString());
                 
             }
             
@@ -633,7 +633,7 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                blinds.setCloseTime(blinds.getCloseTime().minusSeconds(1));
+                blinds.setCloseTime((blinds.getCloseTime().minusSeconds(1)).toString());
                 
             }
             
@@ -1334,7 +1334,7 @@ public class WindowManager {
                 if (LocalTime.now().getHour()==blinds.getOpenTime().getHour() &&
                     LocalTime.now().getMinute()==blinds.getOpenTime().getMinute() && 
                     LocalTime.now().getSecond()==blinds.getOpenTime().getSecond() &&
-                    blinds.getIsOpen()==false) {
+                    blinds.getOpenStatus()) {
                     openClose.doClick();
                     // blinds.Open();
                     // openClose.setText("Close");
@@ -1342,7 +1342,7 @@ public class WindowManager {
                 else if (LocalTime.now().getHour()==blinds.getCloseTime().getHour() &&
                     LocalTime.now().getMinute()==blinds.getCloseTime().getMinute() && 
                     LocalTime.now().getSecond()==blinds.getCloseTime().getSecond() &&
-                    blinds.getIsOpen()) {
+                    blinds.getOpenStatus()) {
                     openClose.doClick();
                     // blinds.Close();
                     // openClose.setText("Open");

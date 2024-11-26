@@ -2,6 +2,7 @@ package Devices;
 
 import java.time.LocalTime;
 //import static java.time.temporal.ChronoUnit.NANOS;
+import java.time.format.DateTimeParseException;
 
 public class Blinds extends Device {
     private boolean isOpen;
@@ -10,8 +11,8 @@ public class Blinds extends Device {
 
     public Blinds(LocalTime oTime, LocalTime cTime) {
       
-        setCloseTime(cTime);
-        setOpenTime(oTime);
+       // setCloseTime(cTime);
+      //  setOpenTime(oTime);
         isOpen=false;
 
         this.openTime = oTime;
@@ -34,55 +35,139 @@ public class Blinds extends Device {
             }
             
         }
-        
-        return STATES.GOOD.toString(); }
+        return STATES.GOOD.toString();
+     }
     
-        public void setCloseTime(LocalTime cTime){
-            this.closeTime=cTime;
+    public boolean setCloseTime(String cTime){
+        try {
+            LocalTime lt = LocalTime.parse(cTime);
+            this.closeTime = lt;
+        }
+        catch (DateTimeParseException e) {
+            return false;
         }
 
-        public void setOpenTime(LocalTime oTime){
-            this.openTime=oTime;
+        return true;
+     }
+
+    public boolean setOpenTime(String oTime){
+        try {
+            LocalTime lt = LocalTime.parse(oTime);
+            this.openTime = lt;
+        }
+        catch (DateTimeParseException e) {
+            return false;
         }
 
-        public LocalTime getOpenTime() {
-            return this.openTime;
-        }
+        return true;
+     }
 
-        public LocalTime getCloseTime() {
-            return this.closeTime;
-        }
+    public LocalTime getOpenTime() {
+        return this.openTime;
+    }
 
-        public boolean getIsOpen() {
-            return this.isOpen;
-        }
+    public LocalTime getCloseTime() {
+        return this.closeTime;
+    }
+
+    public boolean getOpenStatus() {
+        return this.isOpen;
+    }
+
+    public void setOpenStatus(boolean status){
+        this.isOpen = status;
+    }
 
     // Allows remote control of blinds
     public STATES Open() { 
-        this.isOpen = true;
+
+        if(!this.isOpen){
+            this.setOpenStatus(true);
+            return STATES.GOOD; 
+        }
         //void public animationFunctionOrSomething();
-        return STATES.GOOD; }
+        return STATES.ERROR_NO_OPEN;
+        }
 
     public STATES Close() { 
-        this.isOpen = false;
-        //void public animationFunctionOrSomething();
-        return STATES.GOOD; }
 
-    @Override
-    public boolean Set(COMMAND_SET param, String value) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Set'");
+        if(this.isOpen){
+            this.setOpenStatus(false);
+            return STATES.GOOD;
+        }
+        //void public animationFunctionOrSomething();
+        return STATES.ERROR_NO_OPEN; 
     }
 
-    @Override
+    public boolean Set(COMMAND_SET param, String value) {
+       
+        if (param == COMMAND_SET.BLINDS_STATUS){
+
+            if (value.toLowerCase()=="false"|| value.toLowerCase()=="0"){
+                this.setOpenStatus(false);
+                return false;
+            }
+
+            if (value.toLowerCase()=="true"|| value.toLowerCase()=="1"){
+                this.setOpenStatus(true);
+                return true;
+            }
+        }
+
+        if (param == COMMAND_SET.BLINDS_CLOSE_TIME){
+           return this.setCloseTime(value);
+        }
+
+        if (param == COMMAND_SET.BLINDS_OPEN_TIME){
+           return this.setOpenTime(value);
+        }
+
+        return false;
+    }
+
     public String Get(COMMAND_GET param) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+        
+        String result = "";
+
+        if(param == COMMAND_GET.BLINDS_STATUS){
+
+            if(this.getOpenStatus()){
+                result = "true";
+            }
+
+            if(!this.getOpenStatus()){
+                result = "false";
+            }
+        }
+        
+        if(param == COMMAND_GET.BLINDS_CLOSE_TIME){
+
+            result = this.getCloseTime().toString();
+        }
+
+        if(param == COMMAND_GET.BLINDS_OPEN_TIME){
+            
+            result = this.getOpenTime().toString();
+        }
+
+        return result;
     }
 
     @Override
     public String Call(COMMAND_CALL param, String args) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Call'");
+        
+        STATES result = STATES.GOOD;
+
+        if(param == COMMAND_CALL.START){
+
+            result = this.Open();
+        }
+
+        if(param == COMMAND_CALL.STOP){
+
+            result = this.Close();
+        }
+
+        return result.toString();
     }
 }
