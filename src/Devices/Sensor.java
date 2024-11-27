@@ -136,13 +136,13 @@ public class Sensor extends Device {
         if (LocalTime.now().getHour()==this.openTime.getHour() && 
             LocalTime.now().getMinute()==this.openTime.getMinute() && 
             LocalTime.now().getSecond()==this.openTime.getSecond() && 
-            blinds.getIsOpen()==false) {
+            blinds.getOpenStatus()==false) {//CHANGED THIS
             alarm.TriggerAlarm("Blinds are not open!", this);
         }
         else if (LocalTime.now().getHour()==this.closeTime.getHour() && 
                  LocalTime.now().getMinute()==this.closeTime.getMinute() && 
                  LocalTime.now().getSecond()==this.closeTime.getSecond() && 
-                 blinds.getIsOpen()) {
+                 blinds.getOpenStatus()) {//CHANGED THIS!!!
             alarm.TriggerAlarm("Blinds are not closed!", this);
         }
 

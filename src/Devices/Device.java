@@ -40,8 +40,15 @@ public abstract class Device {
           
         // Coffee Machine, bean related
         BEAN_FLAVOUR, BEAN_NEW, BEAN_ADD, BEAN_MAKETIME, BEAN_DAYS,
+
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
+
+        //Camera variables
+        CAMERA_LOCATION, CAMERA_STATE, 
+
+        //Blinds variables
+        BLINDS_STATUS, BLINDS_CLOSE_TIME, BLINDS_OPEN_TIME,
 
         // All
         UNKNOWN
@@ -62,14 +69,17 @@ public abstract class Device {
         // Shower
         SHOWER_TEMPERATURE, SHOWER_HEADTYPE,
 
+         //Camera variables
+         CAMERA_LOCATION, CAMERA_STATE, 
+
+         //Blinds variables
+         BLINDS_STATUS, BLINDS_CLOSE_TIME, BLINDS_OPEN_TIME,
+
         // Thermo
         THERM_TEMPERATURE, THERM_HUMIDITY, THERM_TARGET_TEMP, THERM_TARGET_HUMID, THERM_CELSIUS,
 
         // Smoke Detector
         SD_IS_SMOKEY,
-
-        // Thermostat
-        THERM_TEMPERATURE, THERM_HUMIDITY, THERM_TARGET_TEMP, THERM_TARGET_HUMID, THERM_CELSIUS,
         
         // All
         UNKNOWN

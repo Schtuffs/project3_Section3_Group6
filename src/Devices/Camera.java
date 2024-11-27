@@ -16,6 +16,8 @@ public class Camera extends Device {
 
     private static int numLocation;
 
+    private String tracker;
+
     public Camera(/*String location,*/String [] allLocations, String [] everyLocation) {
 
         this.isOn=false;
@@ -45,6 +47,7 @@ public class Camera extends Device {
             } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+            tracker = STATES.ERROR_READ.toString();
         }
 
         this.selectedLocation=this.allLocations.get(3);
@@ -54,10 +57,14 @@ public class Camera extends Device {
 
     // Inherited methods
     public String Check() { 
-        // Camera current;
-        // if (current.isOn==true){
-        //     return STATES.GOOD;
-        // }
+        if (this.selectedLocation==""){
+            return STATES.ERROR_UNKNOWN.toString();
+        }
+
+        if(this.tracker == STATES.ERROR_READ.toString()){
+            return STATES.ERROR_READ.toString();
+        }
+        
         return STATES.GOOD.toString();
     }
     
@@ -97,17 +104,35 @@ public class Camera extends Device {
     }
 
     //Concepts of left and right camera location changing for initial implementation
-    public STATES ChangeCamera (boolean right){
+    public boolean ChangeCamera (String location){
 
-        if (right){//If the user presses the right button, move to the next camera location
-            this.selectedLocation=this.allLocations.get(Camera.numLocation++);   
+        
+        if (location.toLowerCase()=="backyard"){//If the user presses the backyard button, move to the appropriate camera location
+            this.selectedLocation=this.allLocations.get(0);   
+           // return Start();//Change the current camera image being displayed
         }
 
-        else {
-            this.selectedLocation=this.allLocations.get(Camera.numLocation--);
+        if (location.toLowerCase()=="frontyard"){//If the user presses the frontyard button, move to the appropriate camera location
+            this.selectedLocation=this.allLocations.get(1);   
+           // return Start();//Change the current camera image being displayed
+        }
+
+        if (location.toLowerCase()=="pool"){//If the user presses the pool button, move to the appropriate camera location
+            this.selectedLocation=this.allLocations.get(2);   
+           // return Start();//Change the current camera image being displayed
+        }
+
+        if (location.toLowerCase()=="front door"){//If the user presses the front door button, move to the appropriate camera location
+            this.selectedLocation=this.allLocations.get(3);   
+          //  return Start();//Change the current camera image being displayed
+        }
+
+        if (location.toLowerCase()=="back door"){//If the user presses the back door button, move to the appropriate camera location
+            this.selectedLocation=this.allLocations.get(4);   
+          //  return Start();//Change the current camera image being displayed
         }
         
-        return STATES.GOOD;
+        return false;
     }
 
     public STATES Stop() { 
@@ -120,26 +145,75 @@ public class Camera extends Device {
      }
 
     public  boolean getCameraState(){
-
         return this.isOn;
     }
 
-    @Override
+    public void setCameraState(boolean state){
+        this.isOn=state;
+    }
+
+    //Camera variables
+   // CAMERA_LOCATION, CAMERA_IS_ON, CAMERA_IS_OFF, 
+
     public boolean Set(COMMAND_SET param, String value) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Set'");
-    }
 
-    @Override
+        if (param==COMMAND_SET.CAMERA_STATE) {
+
+            // set isbeeping to false if false passed in
+            if (value.toLowerCase().equals("true") || value.equals("0")) {
+                this.setCameraState(true);
+                return true;
+            }
+
+            else if(value.toLowerCase().equals("false") || value.equals("1")){
+                this.setCameraState(false);
+                return false;
+               // return this.Stop();
+            }
+        }
+             if (param==COMMAND_SET.CAMERA_LOCATION) {
+                return this.ChangeCamera(value);
+        }
+
+
+    return false;
+ }
+
     public String Get(COMMAND_GET param) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Get'");
+
+        String result = "";
+
+        if (param == COMMAND_GET.CAMERA_STATE){
+    
+            if (this.getCameraState()){
+                result = "true";
+            }
+            if (!this.getCameraState()){
+                result = "false";
+            }
+        }
+
+        if (param == COMMAND_GET.CAMERA_LOCATION) {
+            result = this.selectedLocation;
+        } 
+
+        return result;
     }
 
-    @Override
+
     public String Call(COMMAND_CALL param, String args) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Call'");
+       
+        STATES result = STATES.GOOD;
+
+        if (param == COMMAND_CALL.START){
+            result = this.Start();
+        }
+
+        if( param == COMMAND_CALL.STOP){
+            result = this.Stop();
+        }
+
+        return result.toString();
     }
 }
 
