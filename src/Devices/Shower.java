@@ -141,8 +141,6 @@ public class Shower extends Device {
             state = STATES.ERROR_UNKNOWN;
         }
 
-
-
         return state.toString();
     }
 
@@ -150,14 +148,16 @@ public class Shower extends Device {
     private STATES Start() {
         if (!this.isOn) {
             this.isOn = true;
+            return STATES.GOOD;
         }
-        return STATES.GOOD;
+        return STATES.ERROR_NO_START;
     }
 
     private STATES Stop() {
         if (this.isOn) {
             this.isOn = false;
+            return STATES.GOOD;
         }
-        return STATES.GOOD;
+        return STATES.ERROR_NO_STOP;
     }
 }

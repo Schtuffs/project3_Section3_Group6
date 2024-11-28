@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import Devices.*;
 import Devices.Device.COMMAND_CALL;
 import Devices.Device.COMMAND_GET;
