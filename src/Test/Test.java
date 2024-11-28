@@ -6,29 +6,40 @@ import Devices.*;
 import Managers.*;
 import Devices.Device.COMMAND_GET;
 import Devices.Device.COMMAND_SET;
+import Devices.Device.COMMAND_CALL;
 
 public class Test {
     public static void main(String[] args) throws InterruptedException {
-
         // Commented out so a bunch of pop-up windows are not created for others
-        // TestAlarm();
+        TestAlarm();
+        System.out.println("Alarm tests completed");
         TestBlinds();
+        System.out.println("Blinds tests completed");
         TestCamera();
+        System.out.println("Camera tests completed");
         TestCoffeeMachine();
+        System.out.println("Coffee tests completed");
         TestSensor();
+        System.out.println("Sensor tests completed");
         TestShower();
+        System.out.println("Shower tests completed");
         TestSmokeDetector();
+        System.out.println("Smoke Detector tests completed");
         TestThermostat();
+        System.out.println("Thermostat tests completed");
         TestWindowManager();
+        System.out.println("WindowManager tests completed");
         TestAlertManager();
+        System.out.println("AlertManager tests completed");
         TestFileManager();
+        System.out.println("FileManager tests completed");
         TestDeviceManager();
+        System.out.println("DeviceManager tests completed");
 
         Assert.Results();
     }
-
+   
     private static void TestAlarm() throws InterruptedException {
-
         // 1
         // TEST_UNIT_ALARM_01 part 1
         {
@@ -316,7 +327,10 @@ public class Test {
     }
 
     private static void TestCamera() {
-
+        //What
+        //The
+        //Frick
+        //Frack
     }
 
     private static void TestCoffeeMachine() {
@@ -460,6 +474,23 @@ public class Test {
             coffee.Set(Device.COMMAND_SET.BEAN_DAYS, "Sunday, Saturday, Sunday, Sunday");
             // Get the bean days
             actual = coffee.Get(Device.COMMAND_GET.BEAN_DAYS);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        // Test calling
+        
+        // Start and stop machine
+        {
+            CoffeeMachine coffee = new CoffeeMachine();
+            String expected = "GOOD";
+            String actual;
+
+            // Change state
+            coffee.Call(COMMAND_CALL.START, "");
+            coffee.Call(COMMAND_CALL.STOP, "");
+
+            actual = coffee.Check();
 
             Assert.AreEqual(expected, actual);
         }
@@ -828,6 +859,30 @@ public class Test {
 
             shower.Set(COMMAND_SET.SHOWER_HEADTYPE, "RaiN");
             actual = shower.Get(COMMAND_GET.SHOWER_HEADTYPE);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        // Test calls
+
+        // Start
+        {
+            Shower shower = new Shower();
+            String expected = "GOOD";
+            String actual;
+
+            actual = shower.Call(COMMAND_CALL.START, "");
+
+            Assert.AreEqual(expected, actual);
+        }
+        // Stop
+        {
+            Shower shower = new Shower();
+            String expected = "GOOD";
+            String actual;
+            
+            shower.Call(COMMAND_CALL.START, "");
+            actual = shower.Call(COMMAND_CALL.STOP, "");
 
             Assert.AreEqual(expected, actual);
         }
