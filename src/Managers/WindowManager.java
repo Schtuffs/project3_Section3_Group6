@@ -537,7 +537,7 @@ public class WindowManager {
         blindPanel.add(blindsLabel, c);
 
         // Text to show Automatic Open Time
-        JLabel openTime = new JLabel("<html><p style=\"width:250px\">Automatic Open Time</p></html>", SwingConstants.CENTER);
+        JLabel openTime = new JLabel("Automatic Open Time", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
@@ -689,7 +689,7 @@ public class WindowManager {
         blindPanel.add(decrementSecondOpen, c);
 
         // Text to show Automatic Open Time
-        JLabel closeTime = new JLabel("<html><p style=\"width:250px\">Automatic Close Time</p></html>", SwingConstants.CENTER);
+        JLabel closeTime = new JLabel("Automatic Close Time", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0,0,0,0);
         c.gridx = 1;
@@ -954,7 +954,7 @@ public class WindowManager {
         sensorPanel.add(sensorLabel, c);
 
         // Text to show Automatic Open Time
-        JLabel sensorOpenTime = new JLabel("<html><p style=\"width:250px\">Open Time</p></html>", SwingConstants.CENTER);
+        JLabel sensorOpenTime = new JLabel("Open Time", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
@@ -1106,7 +1106,7 @@ public class WindowManager {
         sensorPanel.add(s_decrementSecondOpen, c);
 
         // Text to show Automatic Open Time
-        JLabel s_closeTime = new JLabel("<html><p style=\"width:250px\">Close Time</p></html>", SwingConstants.CENTER);
+        JLabel s_closeTime = new JLabel("Close Time", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0,0,0,0);
         c.gridx = 1;
@@ -1382,7 +1382,7 @@ public class WindowManager {
         showerPanel.add(showerLabel, c);
 
         // Text to show patterns
-        JLabel temperText = new JLabel("<html><p style=\"width:100px\">Temperature C</p></html>", SwingConstants.CENTER);
+        JLabel temperText = new JLabel("Temperature C", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
@@ -1392,7 +1392,7 @@ public class WindowManager {
         showerPanel.add(temperText, c);
 
         // Text to show patterns
-        JLabel patternsText = new JLabel("<html><p style=\"width:100px\">Head Pattern</p></html>", SwingConstants.CENTER);
+        JLabel patternsText = new JLabel("Head Pattern", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
@@ -1496,7 +1496,7 @@ public class WindowManager {
         thermoPanel.add(thermLabel, c);
 
         // Text to display units 
-        JLabel unitsText = new JLabel("<html><p style=\"width:100px\">Temperature Units</p></html>", SwingConstants.CENTER);
+        JLabel unitsText = new JLabel("Temperature Units", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
@@ -1506,7 +1506,7 @@ public class WindowManager {
         thermoPanel.add(unitsText, c);
 
         // Text to Temperature 
-        JLabel tTemperText = new JLabel("<html><p style=\"width:100px\">Target Temperature</p></html>", SwingConstants.CENTER);
+        JLabel tTemperText = new JLabel("Target Temperature", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
@@ -1516,7 +1516,7 @@ public class WindowManager {
         thermoPanel.add(tTemperText, c);
 
         // Text to humidity 
-        JLabel tHumidText = new JLabel("<html><p style=\"width:100px\">Target Humidity</p></html>", SwingConstants.CENTER);
+        JLabel tHumidText = new JLabel("Target Humidity", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 1;
@@ -1563,7 +1563,7 @@ public class WindowManager {
         thermoPanel.add(thermHumid, c);
 
         // Text to Current Temperature 
-        JLabel cTemperText = new JLabel("<html><p style=\"width:100px\">Current Temperature</p></html>", SwingConstants.CENTER);
+        JLabel cTemperText = new JLabel("Current Temperature", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 3;
@@ -1573,7 +1573,7 @@ public class WindowManager {
         thermoPanel.add(cTemperText, c);
 
         // Text to humidity 
-        JLabel cHumidText = new JLabel("<html><p style=\"width:100px\">Current Humidity</p></html>", SwingConstants.CENTER);
+        JLabel cHumidText = new JLabel("Current Humidity", SwingConstants.CENTER);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 2;
         c.gridy = 3;
