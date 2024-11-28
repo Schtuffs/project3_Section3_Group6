@@ -413,8 +413,7 @@ public class WindowManager {
         c.ipady = 15;
         blindPanel.add(incrementSecondOpen, c);
 
-        // Display the Open Time 
-        System.out.println(blinds.getOpenTime());
+        // Display the Open Time
         JTextField openTimeDisplay = new JTextField(blinds.getOpenTime().toString());
         openTimeDisplay.setFont(null);
         openTimeDisplay.setEditable(false);
@@ -1371,7 +1370,6 @@ public class WindowManager {
                 }
 
                 // Randomly change values
-               // System.out.println(thermostat.getTargetTemp()+"  "+thermostat.getTemp());
                 if (thermostat.getTargetTemp()!=thermostat.getTemp()) {
                     int rand = ((int) (Math.random() * 100 + 1));
                     if (rand==1 && thermostat.getTargetTemp()>thermostat.getTemp()) {
