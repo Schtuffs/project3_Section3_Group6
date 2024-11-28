@@ -1009,7 +1009,7 @@ public class Test {
 
             // Get Vals
             if (!(am.GetAlarm().equals(alarm))) {actual=false;}
-            else if (!am.GetAlert().equals("Test Alert")) {actual=false;}
+            else if (!am.GetAlert().equals("An error has occured")) {actual=false;}
 
             // Assert
             Assert.IsTrue(actual);

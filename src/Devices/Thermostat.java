@@ -3,13 +3,13 @@
 package Devices;
 
 public class Thermostat extends Device {
-    private static boolean celsius; // true == celsius, false == fahrenheit
+    private boolean celsius; // true == celsius, false == fahrenheit
     private double humidity, temperature, targetHumidity, targetTemperature;
 
     // Default constructor
     public Thermostat(boolean curUnit, double targetHumid, double targetTemp) {
         // Unit by default is in celsius 
-        Thermostat.celsius = curUnit;
+        this.celsius = curUnit;
         // Humidity default is none
         this.targetHumidity = targetHumid;
         // Temperature default is 20
@@ -40,10 +40,10 @@ public class Thermostat extends Device {
         // and the temperature is converted using the celsius -> fahrenheit formula.
         if ( celsius == true && newUnit == false ) {
             // change to fahrenheit
-            Thermostat.celsius = false;
+            this.celsius = false;
 
             // calculate the new temperature
-            ChangeTemperature(Thermostat.celsius);
+            ChangeTemperature(this.celsius);
 
             // return true to indicate that the unit change has been successfully executed.
             return STATES.GOOD;
@@ -56,7 +56,7 @@ public class Thermostat extends Device {
             celsius = true;
 
             // calculate the new temperature
-            ChangeTemperature(Thermostat.celsius);
+            ChangeTemperature(this.celsius);
 
             // return true to indicate that the unit change has been successfully executed.
             return STATES.GOOD;
@@ -71,8 +71,8 @@ public class Thermostat extends Device {
     private void ChangeTemperature(boolean newUnit) {
         // if the current unit is fahrenheit, convert the current temperature (assumed celsius) to fahrenheit
         if (!newUnit){
-            this.temperature = ((9.0/5.0) * temperature + 32);
-            this.targetTemperature = ((9.0/5.0) * targetTemperature + 32);
+            this.temperature = ((9.0/5.0 * temperature) + 32);
+            this.targetTemperature = ((9.0/5.0 * targetTemperature) + 32);
         }
 
         // if the current unit is celsius, convert the current temperature (assumed fahrenheit) to fahrenheit

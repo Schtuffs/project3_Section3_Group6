@@ -33,12 +33,15 @@ public class WindowManager {
     private boolean check;
     private LocalTime prev_time;
     private Timer timer;
+    private boolean passed = false;
     
 
     private enum SCREENS {
         SCREEN_MAIN, SCREEN_ALARM, SCREEN_BLINDS, SCREEN_CAMERA, SCREEN_COFFEE, SCREEN_SENSOR, SCREEN_SHOWER, SCREEN_SMOKE, SCREEN_THERMO
     };
 
+
+    // references to the current devices the screen needs to display
     private Alarm alarm;
     private Sensor sensor;
     private CoffeeMachine coffeeMachine;
@@ -47,6 +50,19 @@ public class WindowManager {
     private SmokeDetector smokey;
     private Blinds blinds;
     private Thermostat thermostat;
+
+    //different screens to display the individual devices
+    private JPanel thermoPanel;
+    private JPanel smokePanel;
+    private JPanel showerPanel;
+    private JPanel sensorPanel;
+    private JPanel coffeePanel;
+    private JPanel cameraPanel;
+    private JPanel blindPanel;
+    private JPanel alarmPanel;
+
+    GridBagConstraints c;
+
 
 
     private SCREENS screen;
@@ -240,8 +256,7 @@ public class WindowManager {
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timer.stop();
-                WindowManager.this.window.dispose();
+                System.exit(1);
             }
         });
 
@@ -266,15 +281,12 @@ public class WindowManager {
     }
 
     private void SetupCenter() {
+
         // Main layout is card, each subpanel can be anything, but can also have same generic structure
 
         // Home page
         JPanel home = new JPanel();
         home.setLayout(new GridLayout());
-
-        // for laying out panels
-        GridBagConstraints c = new GridBagConstraints();
-        c.ipadx = 0;
 
         JButton but = new JButton("Button of Errors");
         but.addActionListener(new ActionListener() {
@@ -286,8 +298,176 @@ public class WindowManager {
         });
         home.add(but);
 
+
+        // Add screens independently to the screen
+
+        AlarmScreen();
+        BlindsScreen();
+        SensorScreen();
+        CameraScreen();
+        CoffeeMachineScreen();
+        SmokeDetectorScreen();
+        ShowerScreen();
+        ThermostatScreen();
+
+        
+        
+        // Add the different screens to the card container
+        this.center.add(home, SCREENS.SCREEN_MAIN.toString());
+        this.center.add(alarmPanel, SCREENS.SCREEN_ALARM.toString());
+        this.center.add(blindPanel, SCREENS.SCREEN_BLINDS.toString());
+        this.center.add(cameraPanel, SCREENS.SCREEN_CAMERA.toString());
+        this.center.add(coffeePanel, SCREENS.SCREEN_COFFEE.toString());
+        this.center.add(sensorPanel, SCREENS.SCREEN_SENSOR.toString());
+        this.center.add(showerPanel, SCREENS.SCREEN_SHOWER.toString());
+        this.center.add(smokePanel, SCREENS.SCREEN_SMOKE.toString());
+        this.center.add(thermoPanel, SCREENS.SCREEN_THERMO.toString());
+
+        // Set this center panel to the window
+        this.window.add(this.center, BorderLayout.CENTER);
+
+
+        /* 
+        // Creates a timer that runs FPS times every second
+        timer = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+
+
+
+
+
+                // Camera Stuff
+
+
+
+
+
+                // Blinds Stuff
+                openTimeDisplay.setText(blinds.getOpenTime().toString());
+                closeTimeDisplay.setText(blinds.getCloseTime().toString());
+
+
+                if (LocalTime.now().getHour()==blinds.getOpenTime().getHour() &&
+                    LocalTime.now().getMinute()==blinds.getOpenTime().getMinute() && 
+                    LocalTime.now().getSecond()==blinds.getOpenTime().getSecond() &&
+                    blinds.getIsOpen()==false) {
+                    openClose.doClick();
+                }
+                else if (LocalTime.now().getHour()==blinds.getCloseTime().getHour() &&
+                    LocalTime.now().getMinute()==blinds.getCloseTime().getMinute() && 
+                    LocalTime.now().getSecond()==blinds.getCloseTime().getSecond() &&
+                    blinds.getIsOpen()) {
+                    openClose.doClick();
+                }
+
+
+
+
+
+
+                // Thermostat Stuff
+
+                thermostat.SetTargetTemperature((Double)thermTemper.getValue());
+                thermostat.SetTargetHumidity((Double)thermHumid.getValue());
+
+                if (units.getSelectedItem()=="C") {
+                    if (!thermostat.SetUnit(true).equals(STATES.ERROR_INVALID_UNIT)) {
+                        cTemp.setText(""+thermostat.getTargetTemp());
+                        thermTemper.setValue(thermostat.getTemp());
+                    }
+                }
+                else if (units.getSelectedItem()=="F") {
+                    if (!thermostat.SetUnit(false).equals(STATES.ERROR_INVALID_UNIT)) {
+                        cTemp.setText(""+thermostat.getTargetTemp());
+                        thermTemper.setValue(thermostat.getTemp());
+                    }
+                }
+
+                
+                // Randomly change values
+                // System.out.println(thermostat.getTargetTemp()+"  "+thermostat.getTemp());
+                if (thermostat.getTargetTemp()!=thermostat.getTemp()) {
+                    int rand = ((int) (Math.random() * 100 + 1));
+                    if (rand==1 && thermostat.getTargetTemp()>thermostat.getTemp()) {
+                        thermostat.SetTemperature(thermostat.getTemp()+0.1);
+                    }
+                    else if (rand==1 && thermostat.getTargetTemp()<thermostat.getTemp()) {
+                        thermostat.SetTemperature(thermostat.getTemp()-0.1);
+                    }
+                }
+                if (thermostat.getTargetHumid()!=thermostat.getHumidity()) {
+                    int rand = ((int) (Math.random() * 100 + 1));
+                    if (rand==1 && thermostat.getTargetHumid()>thermostat.getHumidity()) {
+                        thermostat.SetHumidity(thermostat.getHumidity()+0.1);
+                    }
+                    else if (rand==1 && thermostat.getTargetHumid()<thermostat.getHumidity()) {
+                        thermostat.SetHumidity(thermostat.getHumidity()-0.1);
+                    }
+                }
+
+                // display values
+
+                cTemp.setText(String.format("%.1f", +thermostat.getTemp()));
+                cHumid.setText(String.format("%.1f", +thermostat.getHumidity()));
+
+
+                // need to do actual vs set calculations here
+
+
+                // Smoke Detector Stuff
+                int rand = ((int) (Math.random() * 1000 + 1));
+
+                // probably change this to a function in smoke detector
+                if (rand==1) {
+                    smokey.SetIsSmokey(true);
+                } 
+                else {smokey.SetIsSmokey(false); }
+
+                if (smokey.GetIsSmokey()) {
+                    alarm.TriggerAlarm("Theres a fire in the house!",smokey);
+                }
+
+
+
+                // Shower Stuff
+                shower.Set(COMMAND_SET.SHOWER_TEMPERATURE,(temper.getValue().toString()));
+                temper.setValue(Double.parseDouble(shower.Get(COMMAND_GET.SHOWER_TEMPERATURE)));
+
+                // Coffee Machine Stuff
+
+
+
+                // Sensor stuff
+                sensor.MonitorDevice(blinds);
+                s_openTimeDisplay.setText(sensor.GetOpenTime().toString());
+                s_closeTimeDisplay.setText(sensor.GetCloseTime().toString());
+
+
+                // Alarm stuff
+                if (alarm.GetIsBeeping()) {
+                    stopAlarm.setVisible(true);
+                } 
+                else {stopAlarm.setVisible(false);}
+            }
+
+        } );
+        timer.setRepeats(true);
+        timer.start();
+        */
+
+
+    }
+
+    private void AlarmScreen() {
+
         // Alarm page
-        JPanel alarmPanel = new JPanel();
+        c = new GridBagConstraints();
+
+        
+        alarmPanel = new JPanel();
         alarmPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the alarm 
@@ -321,14 +501,30 @@ public class WindowManager {
         c.insets = new Insets(100,200,50,200);
         alarmPanel.add(stopAlarm, c);
 
+        Timer time = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
+                // Alarm stuff
+                if (alarm.GetIsBeeping()) {
+                    stopAlarm.setVisible(true);
+                } 
+                else {stopAlarm.setVisible(false);}
+            }
 
-        //////////////////////////////////////////////////////////////////////////////
+        } );
+        time.setRepeats(true);
+        time.start();
+
+    }
+
+    private void BlindsScreen() {
+
         c = new GridBagConstraints();
 
         // Blinds page
-        JPanel blindPanel = new JPanel();
+        blindPanel = new JPanel();
         blindPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the alarm 
@@ -413,7 +609,7 @@ public class WindowManager {
         c.ipady = 15;
         blindPanel.add(incrementSecondOpen, c);
 
-        // Display the Open Time
+        // Display the Open Time 
         JTextField openTimeDisplay = new JTextField(blinds.getOpenTime().toString());
         openTimeDisplay.setFont(null);
         openTimeDisplay.setEditable(false);
@@ -675,15 +871,47 @@ public class WindowManager {
         c.ipadx = 100;
         blindPanel.add(openClose, c);
 
+        // Creates a timer that runs FPS times every second
+        timer = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
 
+                // Blinds Stuff
+                openTimeDisplay.setText(blinds.getOpenTime().toString());
+                closeTimeDisplay.setText(blinds.getCloseTime().toString());
 
 
-        ////////////////////////////////////////////////////////////////////////
+                if (LocalTime.now().getHour()==blinds.getOpenTime().getHour() &&
+                    LocalTime.now().getMinute()==blinds.getOpenTime().getMinute() && 
+                    LocalTime.now().getSecond()==blinds.getOpenTime().getSecond() &&
+                    blinds.getOpenStatus()==false) {
+                    openClose.doClick();
+                }
+                else if (LocalTime.now().getHour()==blinds.getCloseTime().getHour() &&
+                    LocalTime.now().getMinute()==blinds.getCloseTime().getMinute() && 
+                    LocalTime.now().getSecond()==blinds.getCloseTime().getSecond() &&
+                    blinds.getOpenStatus()) {
+                    openClose.doClick();
+                }
+
+
+            }
+
+        } );
+        timer.setRepeats(true);
+        timer.start();
+
+
+    }
+
+    private void CameraScreen() {
+
         c = new GridBagConstraints();
         
         // Camera page
-        JPanel cameraPanel = new JPanel();
+        cameraPanel = new JPanel();
         cameraPanel.setLayout(new GridLayout());
 
         ImageIcon cameraPng = new ImageIcon("Assets/Devices/camera.png");
@@ -694,25 +922,26 @@ public class WindowManager {
         c.gridwidth = 2;
         cameraPanel.add(cameraLabel, c);
 
-        ////////////////////////////////////////////////////////////////
-        
-        // Coffee page
-        JPanel coffeePanel = new JPanel();
-        coffeePanel.setLayout(new GridLayout());
+        Timer time = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
 
-        ImageIcon coffeePng = new ImageIcon("Assets/Devices/coffeeMachine.png");
-        JLabel coffeeLabel = new JLabel(coffeePng);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 2;
-        coffeePanel.add(coffeeLabel, c);
-        
-        ///////////////////////////////////////////////////////////////////////
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                // Camera stuff
+            }
+
+        } );
+        time.setRepeats(true);
+        time.start();
+
+    }
+
+    private void SensorScreen() {
+
         c = new GridBagConstraints();
         
         // Sensor page
-        JPanel sensorPanel = new JPanel();
+        sensorPanel = new JPanel();
         sensorPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the alarm 
@@ -1039,16 +1268,108 @@ public class WindowManager {
         c.ipadx = 100;
         sensorPanel.add(dismiss, c);
 
+        // Creates a timer that runs FPS times every second
+        timer = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {         
+
+                // Sensor stuff
+                sensor.MonitorDevice(blinds);
+                s_openTimeDisplay.setText(sensor.GetOpenTime().toString());
+                s_closeTimeDisplay.setText(sensor.GetCloseTime().toString());
 
 
+            }
 
+        });
+        
+        timer.setRepeats(true);
+        timer.start();
+    
+    
 
-        ///////////////////////////////////////////////
+    }
+
+    private void SmokeDetectorScreen() {
+
+        c = new GridBagConstraints();
+        
+        // SmokeDetector page
+        smokePanel = new JPanel();
+        smokePanel.setLayout(new GridLayout());
+        
+        /// Simply show the smoke detector since it is uninteractable 
+        // Sample picture to display the smokey detector 
+        ImageIcon smokePng = new ImageIcon("Assets/Devices/smokeDetector.png");
+        JLabel smokeLabel = new JLabel(smokePng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        smokePanel.add(smokeLabel, c);
+
+        // Creates a timer that runs FPS times every second
+        timer = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                // Smoke Detector Stuff
+                int rand = ((int) (Math.random() * 1000 + 1));
+
+                // probably change this to a function in smoke detector
+                if (rand==1) {
+                    smokey.SetIsSmokey(true);
+                } 
+                else {smokey.SetIsSmokey(false); }
+
+                if (smokey.GetIsSmokey()) {
+                    alarm.TriggerAlarm("Theres a fire in the house!",smokey);
+                }
+
+            }
+
+        } );
+        timer.setRepeats(true);
+        timer.start();
+
+    }
+
+    private void CoffeeMachineScreen() {
+
+        coffeePanel = new JPanel();
+        coffeePanel.setLayout(new GridLayout());
+
+        ImageIcon coffeePng = new ImageIcon("Assets/Devices/coffeeMachine.png");
+        JLabel coffeeLabel = new JLabel(coffeePng);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        coffeePanel.add(coffeeLabel, c);
+
+        Timer time = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                // CoffeeMachine stuff
+            }
+
+        } );
+        time.setRepeats(true);
+        time.start();
+
+    }
+
+    private void ShowerScreen() {
+
         c = new GridBagConstraints();
         
         
         // Shower page
-        JPanel showerPanel = new JPanel();
+        showerPanel = new JPanel();
         showerPanel.setLayout(new GridBagLayout());
 
         // Sample picture to display the shower 
@@ -1081,9 +1402,6 @@ public class WindowManager {
         showerPanel.add(patternsText, c);
 
 
-
-
-
         JComboBox<String> headPatterns = new JComboBox<String>();
         for (int i = 0;i<shower.GetPatternCount();i++) {
             headPatterns.addItem(shower.GetHeadPattern(i));
@@ -1114,7 +1432,7 @@ public class WindowManager {
                     shower.Call(COMMAND_CALL.STOP, null);
                     startStopShower.setText("Start");
                 }
-                
+
             }
             
         });
@@ -1131,8 +1449,7 @@ public class WindowManager {
         showerPanel.add(startStopShower, c);
 
 
-        JSpinner temper = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
-        temper.setValue(Double.parseDouble(shower.Get(COMMAND_GET.SHOWER_TEMPERATURE)));
+        JSpinner temper = new JSpinner(new SpinnerNumberModel(Double.parseDouble(shower.Get(COMMAND_GET.SHOWER_TEMPERATURE)),10.0 ,30.0,0.1));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0,100,0,100);
         c.gridx = 1;
@@ -1141,37 +1458,35 @@ public class WindowManager {
         c.ipady = 25;
         c.gridwidth = 1;
         showerPanel.add(temper, c);
-        
 
-        /////////////////////////////////////////////////////////////////
-        c = new GridBagConstraints();
-        
-        // SmokeDetector page
-        JPanel smokePanel = new JPanel();
-        smokePanel.setLayout(new GridLayout());
-        
-        /// Simply show the smoke detector since it is uninteractable 
-        // Sample picture to display the smokey detector 
-        ImageIcon smokePng = new ImageIcon("Assets/Devices/smokeDetector.png");
-        JLabel smokeLabel = new JLabel(smokePng);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 3;
-        smokePanel.add(smokeLabel, c);
+        // Creates a timer that runs FPS times every second
+        timer = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+ 
+                // Shower Stuff
+                shower.Set(COMMAND_SET.SHOWER_TEMPERATURE,(temper.getValue().toString()));
+                temper.setValue(Double.parseDouble(shower.Get(COMMAND_GET.SHOWER_TEMPERATURE)));
 
+            }
 
+        } );
+        timer.setRepeats(true);
+        timer.start();
 
+    }
 
-        /////////////////////////////////////
+    private void ThermostatScreen() {
+
         c = new GridBagConstraints();
         
         
         // Thermostat page
-        JPanel thermoPanel = new JPanel();
+        thermoPanel = new JPanel();
         thermoPanel.setLayout(new GridBagLayout());
 
+        // image to display the thermostat
         ImageIcon thermPng = new ImageIcon("Assets/Devices/thermostat.png");
         JLabel thermLabel = new JLabel(thermPng);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1210,10 +1525,10 @@ public class WindowManager {
         c.gridwidth = 1;
         thermoPanel.add(tHumidText, c);
 
+        // drop down menu where user can change the temperature unit
         JComboBox<String> units = new JComboBox<String>();
         units.addItem("C");
         units.addItem("F");
-
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0,50,0,50);
         c.gridx = 0;
@@ -1223,6 +1538,7 @@ public class WindowManager {
         c.gridwidth = 1;
         thermoPanel.add(units, c);
 
+        // spinner component to allow the user to change the target temperature
         JSpinner thermTemper = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
         thermTemper.setValue(thermostat.getTargetTemp());
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1234,6 +1550,7 @@ public class WindowManager {
         c.gridwidth = 1;
         thermoPanel.add(thermTemper, c);
 
+        // spinner component to allow user to change the humidity
         JSpinner thermHumid = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
         thermHumid.setValue(thermostat.getTargetHumid());
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1288,87 +1605,31 @@ public class WindowManager {
         c.ipadx = 100;
         c.gridwidth = 1;
         thermoPanel.add(cHumid, c);
-        
-        
-        // Add the different screens to the card container
-        this.center.add(home, SCREENS.SCREEN_MAIN.toString());
-        this.center.add(alarmPanel, SCREENS.SCREEN_ALARM.toString());
-        this.center.add(blindPanel, SCREENS.SCREEN_BLINDS.toString());
-        this.center.add(cameraPanel, SCREENS.SCREEN_CAMERA.toString());
-        this.center.add(coffeePanel, SCREENS.SCREEN_COFFEE.toString());
-        this.center.add(sensorPanel, SCREENS.SCREEN_SENSOR.toString());
-        this.center.add(showerPanel, SCREENS.SCREEN_SHOWER.toString());
-        this.center.add(smokePanel, SCREENS.SCREEN_SMOKE.toString());
-        this.center.add(thermoPanel, SCREENS.SCREEN_THERMO.toString());
-
-        // Set this center panel to the window
-        this.window.add(this.center, BorderLayout.CENTER);
-
 
         // Creates a timer that runs FPS times every second
-        //
-        // Honestly, I dont think the FPS logic is right, Im not thinking rn, but it works
-        timer = new Timer((int)(MS_PER_SECOND/FPS), new ActionListener() {
+        timer = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
 
-
-
-
-
-
-                // Camera Stuff
-
-
-
-
-
-                // Blinds Stuff
-                openTimeDisplay.setText(blinds.getOpenTime().toString());
-                closeTimeDisplay.setText(blinds.getCloseTime().toString());
-
-
-                if (LocalTime.now().getHour()==blinds.getOpenTime().getHour() &&
-                    LocalTime.now().getMinute()==blinds.getOpenTime().getMinute() && 
-                    LocalTime.now().getSecond()==blinds.getOpenTime().getSecond() &&
-                    blinds.getOpenStatus()) {
-                    openClose.doClick();
-                    // blinds.Open();
-                    // openClose.setText("Close");
-                }
-                else if (LocalTime.now().getHour()==blinds.getCloseTime().getHour() &&
-                    LocalTime.now().getMinute()==blinds.getCloseTime().getMinute() && 
-                    LocalTime.now().getSecond()==blinds.getCloseTime().getSecond() &&
-                    blinds.getOpenStatus()) {
-                    openClose.doClick();
-                    // blinds.Close();
-                    // openClose.setText("Open");
-                }
-
-
-
-
-
-
                 // Thermostat Stuff
-
                 thermostat.SetTargetTemperature((Double)thermTemper.getValue());
                 thermostat.SetTargetHumidity((Double)thermHumid.getValue());
 
                 if (units.getSelectedItem()=="C") {
                     if (!thermostat.SetUnit(true).equals(STATES.ERROR_INVALID_UNIT)) {
-                        cTemp.setText(""+thermostat.getTargetTemp());
-                        thermTemper.setValue(thermostat.getTemp());
+                        cTemp.setText(""+thermostat.getTemp());
+                        thermTemper.setValue(thermostat.getTargetTemp());
                     }
                 }
                 else if (units.getSelectedItem()=="F") {
                     if (!thermostat.SetUnit(false).equals(STATES.ERROR_INVALID_UNIT)) {
-                        cTemp.setText(""+thermostat.getTargetTemp());
-                        thermTemper.setValue(thermostat.getTemp());
+                        cTemp.setText(""+thermostat.getTemp());
+                        thermTemper.setValue(thermostat.getTargetTemp());
                     }
                 }
 
+                
                 // Randomly change values
                 if (thermostat.getTargetTemp()!=thermostat.getTemp()) {
                     int rand = ((int) (Math.random() * 100 + 1));
@@ -1399,58 +1660,6 @@ public class WindowManager {
 
 
 
-
-
-                // Smoke Detector Stuff
-                int rand = ((int) (Math.random() * 1000 + 1));
-
-                // probably change this to a function in smoke detector
-                if (rand==1) {
-                    smokey.SetIsSmokey(true);
-                } 
-                else {smokey.SetIsSmokey(false); }
-
-                if (smokey.GetIsSmokey()) {
-                    alarm.TriggerAlarm("Theres a fire in the house!",smokey);
-                }
-
-
-
-
-
-                // Shower Stuff
-                shower.Set(COMMAND_SET.SHOWER_TEMPERATURE,(""+temper.getValue()));
-
-
-
-
-
-
-
-
-
-
-                // Coffee Machine Stuff
-
-
-
-
-
-
-
-
-
-                // Sensor stuff
-                sensor.MonitorDevice(blinds);
-                s_openTimeDisplay.setText(sensor.GetOpenTime().toString());
-                s_closeTimeDisplay.setText(sensor.GetCloseTime().toString());
-
-
-                // Alarm stuff
-                if (alarm.GetIsBeeping()) {
-                    stopAlarm.setVisible(true);
-                } 
-                else {stopAlarm.setVisible(false);}
             }
 
         } );
@@ -1458,4 +1667,8 @@ public class WindowManager {
         timer.start();
 
     }
+
+
+
+
 }
