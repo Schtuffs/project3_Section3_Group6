@@ -11,7 +11,7 @@ import Devices.Device.COMMAND_CALL;
 public class Test {
     public static void main(String[] args) throws InterruptedException {
         // Commented out so a bunch of pop-up windows are not created for others
-        // TestAlarm();
+        TestAlarm();
         System.out.println("Alarm tests completed");
         TestBlinds();
         System.out.println("Blinds tests completed");
@@ -19,7 +19,7 @@ public class Test {
         System.out.println("Camera tests completed");
         TestCoffeeMachine();
         System.out.println("Coffee tests completed");
-        // TestSensor();
+        TestSensor();
         System.out.println("Sensor tests completed");
         TestShower();
         System.out.println("Shower tests completed");
@@ -29,7 +29,7 @@ public class Test {
         System.out.println("Thermostat tests completed");
         TestWindowManager();
         System.out.println("WindowManager tests completed");
-        // TestAlertManager();
+        TestAlertManager();
         System.out.println("AlertManager tests completed");
         TestFileManager();
         System.out.println("FileManager tests completed");
