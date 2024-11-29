@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import javax.smartcardio.CardException;
+
 public class FileManager {
     // Read data from file to be turned into devices
     public static String Read(String filename) { 
@@ -54,13 +56,25 @@ public class FileManager {
                     break;
 
                 case "Blinds":
-                    // can't finish implementing yet, enums not written
-                    // f.write(String.valueOf(((Blinds)device).Get(COMMAND_GET.BLINDS_IS_OPEN))));
+                    // Writing the blinds open state to file
+                    f.write(String.valueOf(((Blinds)device).Get(COMMAND_GET.BLINDS_STATUS)));
+                    // Comma seperator for Split(",")
+                    f.write(",");
+                    // Writing the blinds open time
+                    f.write(String.valueOf(((Blinds)device).Get(COMMAND_GET.BLINDS_OPEN_TIME)));
+                    // Comma seperator for Split(",")
+                    f.write(",");
+                    // Writing the blinds open time
+                    f.write(String.valueOf(((Blinds)device).Get(COMMAND_GET.BLINDS_CLOSE_TIME)));
                     break;
 
                 case "Camera":
-                    // can't finish implementing yet, enums not written
-                    // todo camera writing implementation
+                    // Writing the blinds open state to file
+                    f.write(String.valueOf(((Camera)device).Get(COMMAND_GET.CAMERA_LOCATION)));
+                    // Comma seperator for Split(",")
+                    f.write(",");
+                    // Writing the blinds open time
+                    f.write(String.valueOf(((Camera)device).Get(COMMAND_GET.CAMERA_STATE)));
                     break;
 
                 case "CoffeeMachine":
