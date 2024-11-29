@@ -89,10 +89,10 @@ public class Alarm extends Device {
         }
 
         // set isBeeping value
-        if (values[0].equals("0")) {
+        if (values[0].equals("false")) {
             this.isBeeping = false;
         }
-        else if (values[0].equals("1")) {
+        else if (values[0].equals("true")) {
             this.isBeeping = true;
         }
         else {

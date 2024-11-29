@@ -48,10 +48,10 @@ public class Sensor extends Device {
         }
 
         // set isOpen value
-        if (values[0].equals("0")) {
+        if (values[0].equals("false")) {
             this.isOpen = false;
         }
-        else if (values[0].equals("1")) {
+        else if (values[0].equals("true")) {
             this.isOpen = true;
         }
         else {
@@ -66,10 +66,10 @@ public class Sensor extends Device {
         }
 
         // set isDismissed value
-        if (values[1].equals("0")) {
+        if (values[1].equals("false")) {
             this.isDismissed = false;
         }
-        else if (values[1].equals("1")) {
+        else if (values[1].equals("true")) {
             this.isDismissed = true;
         }
         else {
@@ -119,19 +119,6 @@ public class Sensor extends Device {
     }
 
     public boolean MonitorDevice(Blinds blinds) {
-
-        /* Awaiting further implementation
-
-        // check if blinds are open and time is between close time and open time
-        if (blinds.getIsOpen ) {
-            alarm.triggerAlarm();
-        }
-        
-        // check if blinds are closed and time is between open time and close time
-        else if (!blinds.getIsOpen ) {
-            alarm.triggerAlarm();
-        }
-        */
 
         if (LocalTime.now().getHour()==this.openTime.getHour() && 
             LocalTime.now().getMinute()==this.openTime.getMinute() && 

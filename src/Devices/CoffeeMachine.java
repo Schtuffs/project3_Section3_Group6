@@ -314,6 +314,10 @@ public class CoffeeMachine extends Device {
         
     }
 
+    public ArrayList<String> GetFlavours() {
+        return this.allFlavours;
+    }
+
     private String GetBrewDays() {
         String[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
         String toReturn = "";

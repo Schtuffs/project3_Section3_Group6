@@ -111,6 +111,10 @@ public class Shower extends Device {
             return Double.toString(this.temperature);
         } else if (param == COMMAND_GET.SHOWER_HEADTYPE) {
             return this.headPattern;
+        } else if (param == COMMAND_GET.SHOWER_STATE) {
+            if (isOn) {
+                return "on";
+            } return "off";
         } else {
             return COMMAND_GET.UNKNOWN.toString();
         }
