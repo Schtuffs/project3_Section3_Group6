@@ -7,6 +7,19 @@ public class Thermostat extends Device {
     private double humidity, temperature, targetHumidity, targetTemperature;
 
     // Default constructor
+    public Thermostat() {
+        // Unit by default is in celsius 
+        this.celsius = true;
+        // Humidity default is none
+        this.targetHumidity = 20.0;
+        // Temperature default is 20
+        this.targetTemperature = 20.0;
+
+        this.temperature = 20.0;
+        this.humidity = 20.0;
+    }
+
+    // parameter constructor
     public Thermostat(boolean curUnit, double targetHumid, double targetTemp) {
         // Unit by default is in celsius 
         this.celsius = curUnit;

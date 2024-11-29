@@ -890,9 +890,77 @@ public class Test {
 
     private static void TestSmokeDetector() {
 
+        // Test if constructor initializes smokey as false
+        {
+            
+            SmokeDetector sd = new SmokeDetector();
+            boolean expected = false;
+            boolean actual;
+
+            actual = sd.GetIsSmokey();
+    
+            Assert.AreEqual(expected, actual);
+            
+            }
+
+        // Test smoke detector setter & getter
+        {
+
+        SmokeDetector sd = new SmokeDetector();
+        boolean expected = false;
+        boolean actual;
+
+        sd.SetIsSmokey(true);
+        actual = sd.GetIsSmokey();
+
+        Assert.AreEqual(expected, actual);
+        
+        }
+
+        
     }
 
     private static void TestThermostat() {
+
+        // Test temp getter
+        {
+            Thermostat therm = new Thermostat();
+            String expected = "20.0";
+            String actual;
+
+            actual = therm.Get(COMMAND_GET.THERM_TEMPERATURE);
+            Assert.AreEqual(expected, actual);
+        }
+
+        // Test humidity getter
+        {
+            Thermostat therm = new Thermostat();
+            String expected = "20.0";
+            String actual;
+
+            actual = therm.Get(COMMAND_GET.THERM_HUMIDITY);
+            Assert.AreEqual(expected, actual);
+        }
+
+        // Test target therm getter
+        {
+            Thermostat therm = new Thermostat();
+            String expected = "20.0";
+            String actual;
+
+            actual = therm.Get(COMMAND_GET.THERM_TARGET_TEMP);
+            Assert.AreEqual(expected, actual);
+        }
+
+        // Test target HUMIDITY getter
+        {
+            Thermostat therm = new Thermostat();
+            String expected = "20.0";
+            String actual;
+
+            actual = therm.Get(COMMAND_GET.THERM_TARGET_HUMID);
+            Assert.AreEqual(expected, actual);
+        }
 
     }
 
