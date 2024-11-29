@@ -18,11 +18,15 @@ public class Camera extends Device {
 
     private String tracker;
 
+    public Camera(){
+        this.isOn=false;
+        
+    }
     public Camera(/*String location,*/String [] allLocations, String [] everyLocation) {
 
         this.isOn=false;
 
-        // Initialize flavours
+        // Initialize locations
         this.allLocations = new ArrayList<>();
         for (int i = 0; i < allLocations.length; i++) {
         this.allLocations.add(everyLocation[i]);

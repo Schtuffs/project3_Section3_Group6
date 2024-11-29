@@ -7,14 +7,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 import javax.smartcardio.CardException;
 
 public class FileManager {
     // Read data from file to be turned into devices
-    public static String Read(String filename) { 
-        // String buffer
-        String buf = "";
+    public static ArrayList<String> Read(String filename) { 
+
+        // ArrayList buffer
+        ArrayList<String> buf = new ArrayList<String>();
         
         try {
             // File to be read
@@ -24,7 +26,7 @@ public class FileManager {
             // Reading until file ends
             while (s.hasNextLine()) {
                 // Storing the file contents in the buffer
-                buf = s.nextLine();
+                buf.add(s.nextLine());
             }
             // Closing the file
             s.close();
