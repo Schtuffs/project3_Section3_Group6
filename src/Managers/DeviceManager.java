@@ -65,7 +65,9 @@ public class DeviceManager {
                 devices.add(new Blinds(otime, ctime));
             }
             if(currentDevice == "camera"){
-                devices.add(new Camera());
+                String tempLocation[] = new String[5];
+                String allLocations[] = new String[5];
+                devices.add(new Camera(tempLocation, allLocations));
             }
             if(currentDevice == "coffee machine"){
                 devices.add(new CoffeeMachine());

@@ -6,6 +6,9 @@ import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 public class Camera extends Device {
    
     private boolean isOn;
@@ -18,10 +21,6 @@ public class Camera extends Device {
 
     private String tracker;
 
-    public Camera(){
-        this.isOn=false;
-        
-    }
     public Camera(/*String location,*/String [] allLocations, String [] everyLocation) {
 
         this.isOn=false;
@@ -74,74 +73,93 @@ public class Camera extends Device {
     
     
     // Allows activation and deactivation of camera
-    public STATES Start() {
+    public JLabel Start() {
 
         String currentLocation = this.selectedLocation;
-
+        JLabel currentLocationLabel = new JLabel();
+       
         if (currentLocation.equalsIgnoreCase("Backyard")){
-            //present image or call other function for presenting images\
+            ImageIcon backYardPng = new ImageIcon("Assets/Camera/backYard.png");
+            currentLocationLabel= new JLabel(backYardPng);
+            return currentLocationLabel;
+            //present image 
             //if fail, return BAD boolean
         }
 
         if (currentLocation.equalsIgnoreCase("Frontyard")){
-             //present image or call other function for presenting images
+            ImageIcon frontYardPng = new ImageIcon("Assets/Camera/frontYard.png");
+            currentLocationLabel = new JLabel(frontYardPng);
+            return currentLocationLabel;
+             //present image 
              //if fail, return BAD boolean
         }
         
         if (currentLocation.equalsIgnoreCase("Pool")){
-             //present image or call other function for presenting images
+            ImageIcon poolPng = new ImageIcon("Assets/Camera/pool.png");
+            currentLocationLabel= new JLabel(poolPng);
+            return currentLocationLabel;
+             //present image 
              //if fail, return BAD boolean
         }
 
         if (currentLocation.equalsIgnoreCase("Front Door")){
-            //present image or call other function for presenting images
+             ImageIcon frontDoorPng = new ImageIcon("Assets/Camera/Frontdoor.png");
+             currentLocationLabel= new JLabel(frontDoorPng);
+             return currentLocationLabel;
+            //present image or 
             //if fail, return BAD boolean
         }
 
         if (currentLocation.equalsIgnoreCase("Back Door")){
-            //present image or call other function for presenting images
+            ImageIcon backDoorPng = new ImageIcon("Assets/Camera/backDoor.png");
+            currentLocationLabel= new JLabel(backDoorPng);
+            return currentLocationLabel;
+            //present image 
             //if fail, return BAD boolean
         }
 
 
-        return STATES.GOOD;
+        return currentLocationLabel;
     }
 
+    //Make this return a Jlabel, change set to somehow recognize if this worked or not.
     //Concepts of left and right camera location changing for initial implementation
-    public boolean ChangeCamera (String location){
+    public JLabel ChangeCamera (String location){
 
+        JLabel tempLabel = new JLabel();
         
         if (location.toLowerCase()=="backyard"){//If the user presses the backyard button, move to the appropriate camera location
             this.selectedLocation=this.allLocations.get(0);   
-           // return Start();//Change the current camera image being displayed
+            tempLabel = Start();//Change the current camera image being displayed
         }
 
         if (location.toLowerCase()=="frontyard"){//If the user presses the frontyard button, move to the appropriate camera location
             this.selectedLocation=this.allLocations.get(1);   
-           // return Start();//Change the current camera image being displayed
+            tempLabel = Start();//Change the current camera image being displayed
         }
 
         if (location.toLowerCase()=="pool"){//If the user presses the pool button, move to the appropriate camera location
             this.selectedLocation=this.allLocations.get(2);   
-           // return Start();//Change the current camera image being displayed
+            tempLabel = Start();//Change the current camera image being displayed
         }
 
         if (location.toLowerCase()=="front door"){//If the user presses the front door button, move to the appropriate camera location
             this.selectedLocation=this.allLocations.get(3);   
-          //  return Start();//Change the current camera image being displayed
+            tempLabel = Start();//Change the current camera image being displayed
         }
 
         if (location.toLowerCase()=="back door"){//If the user presses the back door button, move to the appropriate camera location
             this.selectedLocation=this.allLocations.get(4);   
-          //  return Start();//Change the current camera image being displayed
+            tempLabel = Start();//Change the current camera image being displayed
         }
         
-        return false;
+        return tempLabel;
     }
 
     public STATES Stop() { 
         
         this.isOn=false;
+
         //Code to change image to a blank screen/redirect to a homescreen
         //if fail, return BAD boolean
         return STATES.GOOD;
@@ -176,7 +194,8 @@ public class Camera extends Device {
             }
         }
              if (param==COMMAND_SET.CAMERA_LOCATION) {
-                return this.ChangeCamera(value);
+                JLabel tempJLabel = this.ChangeCamera(value);
+                return tempJLabel.getIcon()!= null;
         }
 
 
@@ -210,7 +229,10 @@ public class Camera extends Device {
         STATES result = STATES.GOOD;
 
         if (param == COMMAND_CALL.START){
-            result = this.Start();
+            JLabel tempJLabel = this.ChangeCamera(args);
+            if (tempJLabel.getIcon()== null){
+                result = STATES.ERROR_NO_START;
+            }
         }
 
         if( param == COMMAND_CALL.STOP){
