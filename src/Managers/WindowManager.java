@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -69,6 +71,8 @@ public class WindowManager {
 
     GridBagConstraints c;
 
+    FileManager fm;
+
 
 
     private SCREENS screen;
@@ -87,6 +91,7 @@ public class WindowManager {
         this.center.setLayout(this.cards);
         this.FramesPassed = 0;
         this.BeepSeconds = 0;
+        this.fm = new FileManager();
 
         // for Timer purposes
         this.check = false;
@@ -100,7 +105,16 @@ public class WindowManager {
         thermostat = new Thermostat(true, 20, 20);
         smokey = new SmokeDetector();
         coffeeMachine = new CoffeeMachine();
-        // camera = new Camera();
+        camera = new Camera();
+
+        alarm.readDataFromFile(fm.Read("Alarm"));
+        blinds.readDataFromFile(fm.Read("Blinds"));
+        shower.readDataFromFile(fm.Read("Shower"));
+        sensor.readDataFromFile(fm.Read("Sensor"));
+        thermostat.readDataFromFile(fm.Read("Thermostat"));
+        smokey.readDataFromFile(fm.Read("SmokeDetector"));
+        coffeeMachine.readDataFromFile(fm.Read("CoffeeMachine"));
+        camera.readDataFromFile(fm.Read("Camera"));
 
         // Create window
         this.window.getContentPane().setBackground(Color.DARK_GRAY);
@@ -336,8 +350,6 @@ public class WindowManager {
 
         // Set this center panel to the window
         this.window.add(this.center, BorderLayout.CENTER);
-
-
         
         // Creates a timer that runs FPS times every second
         timer = new Timer(MS_PER_SECOND/FPS, new ActionListener() {
@@ -347,8 +359,18 @@ public class WindowManager {
 
                 FramesPassed++;
 
+                // Reset Frames and write Devices to file
                 if (FramesPassed==FPS) {
                     FramesPassed = 0;
+
+                    fm.Write("Alarm", alarm);
+                    fm.Write("Blinds", blinds);
+                    fm.Write("Camera", camera);
+                    fm.Write("Shower", shower);
+                    fm.Write("Sensor", sensor);
+                    fm.Write("Thermostat", thermostat);
+                    fm.Write("CoffeeMachine", coffeeMachine);
+                    fm.Write("SmokeDetector", smokey);
                 }
             }
 
@@ -421,16 +443,16 @@ public class WindowManager {
                     BeepSeconds++;
                 }
 
-                if (!alarm.GetIsBeeping()) {
+                if (!alarm.GetIsBeeping() || !alarmPanel.isVisible()) {
                     BeepSeconds = 0;
                 }
 
                 // Check alarm if it should beep
-                else if (alarm.GetIsBeeping() && FramesPassed==0 && BeepSeconds==alarm.GetBeepDelay()) {
+                else if (alarm.GetIsBeeping() && FramesPassed==0 && BeepSeconds==alarm.GetBeepDelay() && alarmPanel.isVisible()) {
                     alarmLabel.setIcon(alarmOnPng);
                     BeepSeconds = 0;
                 }
-                else if (FramesPassed==((int)(FPS/4)) && BeepSeconds==0) {
+                else if (FramesPassed==((int)(FPS/4)) && BeepSeconds==0 && alarmPanel.isVisible()) {
                     alarmLabel.setIcon(alarmOffPng);
                 }
             }
@@ -824,11 +846,20 @@ public class WindowManager {
                 }
 
                 // blinds display
-                if (blinds.getOpenStatus()) {
+                if (blinds.getOpenStatus() && blindPanel.isVisible()) {
                     blindsLabel.setIcon(blindsOpen);
+
                 }
-                else {
+                else if (!blinds.getOpenStatus() && blindPanel.isVisible()) {
                     blindsLabel.setIcon(blindsClose);
+                }
+
+                if (blinds.getOpenStatus()) {
+                    openClose.setText("Close");
+                    
+                }
+                else if (!blinds.getOpenStatus()) {
+                    openClose.setText("Open");
                 }
 
 
@@ -847,21 +878,21 @@ public class WindowManager {
         cameraPanel = new JPanel();
         cameraPanel.setLayout(new BorderLayout());
 
-        JPanel CameraViews = new JPanel(new GridLayout(3,1));
+        JPanel CameraViews = new JPanel(new GridLayout(15,1));
 
         // hardcoded for now
-        String[] locations = {"Livingroom", "Frontdoor", "Kitchen"};
-        selected = "Livingroom";
 
-        JButton[] locationButtons = new JButton[3];
+        ArrayList<String> locations = camera.GetAllLocations();
+        ArrayList<JButton> locationButtons = new ArrayList();
+
         ActionListener LocationListener = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 
-                for (int i = 0;i<locationButtons.length;i++) {
-                    if (e.getSource()==locationButtons[i]) {
-                        selected = locationButtons[i].getText();
+                for (int i = 0;i<locationButtons.size();i++) {
+                    if (e.getSource()==locationButtons.get(i)) {
+                        selected = locationButtons.get(i).getText();
                     }
                 }
                 
@@ -869,11 +900,12 @@ public class WindowManager {
 
         };
 
-        for (int i = 0;i<locationButtons.length;i++) {
-            locationButtons[i] = new JButton(locations[i]);
-            locationButtons[i].setFont(new Font("Silkscreen",Font.PLAIN,24));
-            locationButtons[i].addActionListener(LocationListener);
-            CameraViews.add(locationButtons[i]);
+        for (int i = 0;i<locations.size();i++) {
+            locationButtons.add(new JButton(locations.get(i)));
+            selected = locations.get(i);
+            locationButtons.get(i).setFont(new Font("Silkscreen",Font.PLAIN,24));
+            locationButtons.get(i).addActionListener(LocationListener);
+            CameraViews.add(locationButtons.get(i));
 
         }
 
@@ -893,7 +925,7 @@ public class WindowManager {
 
                 if (FramesPassed!=0 && cameraPanel.isVisible()) {
                     // set image to be displayed
-                    ImageIcon png = new ImageIcon("Assets/Camera/" + selected + ".png");
+                    ImageIcon png = camera.ChangeCamera(selected);
 
                     // scale the image to the visible panel being displayed 
                     Image img = png.getImage();
@@ -1321,8 +1353,12 @@ public class WindowManager {
 
     private void CoffeeMachineScreen() {
 
+        c = new GridBagConstraints();
+
         coffeePanel = new JPanel();
         coffeePanel.setLayout(new GridBagLayout());
+
+        System.out.println(LocalDate.now().getDayOfWeek());
 
         ImageIcon coffeePng = new ImageIcon("Assets/Devices/coffeeMachine.png");
         JLabel coffeeLabel = new JLabel(coffeePng);
@@ -1332,156 +1368,277 @@ public class WindowManager {
         c.gridwidth = 3;
         coffeePanel.add(coffeeLabel, c);
 
-                // Text to show Automatic Open Time
-                JLabel brewTime = new JLabel("Brew Time", SwingConstants.CENTER);
-                brewTime.setFont(new Font("Silkscreen",Font.PLAIN,24));
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.insets = new Insets(0,0,0,0);
-                c.gridx = 0;
-                c.gridy = 1;
-                c.ipady = 50;
-                c.gridwidth = 3;
-                coffeePanel.add(brewTime, c);
-        
-                // Button to increment hour
-                JButton brewIncHour = new JButton("^");
-        
-                brewIncHour.addActionListener(new ActionListener() {
-        
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-        
-                        coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).plusHours(1).toString());
-                        
-                    }
-                    
-                });
-        
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 2;
-                c.gridwidth = 1;
-                c.ipady = 15;
-                c.insets = new Insets(25,160,0,160);
-                coffeePanel.add(brewIncHour, c);
-        
-                // Button to increment minute
-                JButton brewIncMinute = new JButton("^");
-        
-                brewIncMinute.addActionListener(new ActionListener() {
-        
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-        
-                        coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).plusMinutes(1).toString());
-                        
-                    }
-                    
-                });
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 1;
-                c.gridy = 2;
-                c.gridwidth = 1;
-                c.ipady = 15;
-                coffeePanel.add(brewIncMinute, c);
-        
-                // Button to increment second
-                JButton brewIncSec = new JButton("˄");
-        
-                brewIncSec.addActionListener(new ActionListener() {
-        
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-        
-                        coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).plusSeconds(1).toString());
-                        
-                    }
-                    
-                });
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 2;
-                c.gridy = 2;
-                c.gridwidth = 1;
-                c.ipady = 15;
-                coffeePanel.add(brewIncSec, c);
-        
-                // Display the Open Time 
-                JTextField brewTimeDisplay = new JTextField("00:00:00", SwingConstants.CENTER);
-                brewTimeDisplay.setFont(new Font("Silkscreen",Font.PLAIN,24));
-                brewTimeDisplay.setEditable(false);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.insets = new Insets(0,160,0,160);
-                c.gridx = 0;
-                c.gridy = 3;
-                c.gridwidth = 3;
-                c.ipady = 30;
-                coffeePanel.add(brewTimeDisplay, c);
-        
-                // Button to decrement hour
-                JButton brewDecHour = new JButton("˅");
-        
-                brewDecHour.addActionListener(new ActionListener() {
-        
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-        
-                        coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).minusHours(1).toString());
-                        
-                    }
-                    
-                });
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 4;
-                c.gridwidth = 1;
-                c.ipady = 15;
-                c.insets = new Insets(0,160,25,160);
-                coffeePanel.add(brewDecHour, c);
-        
-                // Button to decrement hour
-                JButton brewDecMinute = new JButton("˅");
-        
-                brewDecMinute.addActionListener(new ActionListener() {
-        
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-        
-                        coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).minusMinutes(1).toString());
-                        
-                    }
-                    
-                });
-        
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 1;
-                c.gridy = 4;
-                c.gridwidth = 1;
-                c.ipady = 15;
-                c.insets = new Insets(0,160,25,160);
-                coffeePanel.add(brewDecMinute, c);
-        
-        
-                // Button to decrement second
-                JButton brewDecSec = new JButton("˅");
-        
-                brewDecSec.addActionListener(new ActionListener() {
-        
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-        
-                        coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).minusSeconds(1).toString());
-                        
-                    }
-                    
-                });
-        
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 2;
-                c.gridy = 4;
-                c.gridwidth = 1;
-                c.ipady = 15;
-                c.insets = new Insets(0,160,25,160);
-                coffeePanel.add(brewDecSec, c);
+        // Text to show Automatic Open Time
+        JLabel brewTime = new JLabel("Brew Time", SwingConstants.CENTER);
+        brewTime.setFont(new Font("Silkscreen",Font.PLAIN,24));
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,0,0,0);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.ipady = 50;
+        c.gridwidth = 3;
+        coffeePanel.add(brewTime, c);
+
+        // Button to increment hour
+        JButton brewIncHour = new JButton("^");
+
+        brewIncHour.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).plusHours(1).toString());
+                
+            }
+            
+        });
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(25,160,0,160);
+        coffeePanel.add(brewIncHour, c);
+
+        // Button to increment minute
+        JButton brewIncMinute = new JButton("^");
+
+        brewIncMinute.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).plusMinutes(1).toString());
+                
+            }
+            
+        });
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        coffeePanel.add(brewIncMinute, c);
+
+        // Button to increment second
+        JButton brewIncSec = new JButton("˄");
+
+        brewIncSec.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).plusSeconds(1).toString());
+                
+            }
+            
+        });
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        coffeePanel.add(brewIncSec, c);
+
+        // Display the Open Time 
+        JTextField brewTimeDisplay = new JTextField("00:00:00", SwingConstants.CENTER);
+        brewTimeDisplay.setFont(new Font("Silkscreen",Font.PLAIN,24));
+        brewTimeDisplay.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0,160,0,160);
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 3;
+        c.ipady = 30;
+        coffeePanel.add(brewTimeDisplay, c);
+
+        // Button to decrement hour
+        JButton brewDecHour = new JButton("˅");
+
+        brewDecHour.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).minusHours(1).toString());
+                
+            }
+            
+        });
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        coffeePanel.add(brewDecHour, c);
+
+        // Button to decrement hour
+        JButton brewDecMinute = new JButton("˅");
+
+        brewDecMinute.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).minusMinutes(1).toString());
+                
+            }
+            
+        });
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        coffeePanel.add(brewDecMinute, c);
+
+
+        // Button to decrement second
+        JButton brewDecSec = new JButton("˅");
+
+        brewDecSec.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                coffeeMachine.Set(COMMAND_SET.BEAN_MAKETIME, LocalTime.parse(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME)).minusSeconds(1).toString());
+                
+            }
+            
+        });
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,160);
+        coffeePanel.add(brewDecSec, c);
+
+        JPanel BrewDayContainer = new JPanel(new GridLayout(8,1));
+
+        JLabel days = new JLabel("Brew Days:");
+        days.setFont(new Font("Silkscreen",Font.BOLD,24));
+        JCheckBox sunday = new JCheckBox("Sunday");
+        sunday.setFont(new Font("Silkscreen",Font.PLAIN,18));
+        if (coffeeMachine.GetBrewDays().indexOf("Sunday")>=0) {
+            sunday.setSelected(true);
+        }
+        sunday.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                coffeeMachine.Set(COMMAND_SET.BEAN_DAYS, "Sunday");
+            }
+
+        });
+
+        JCheckBox monday = new JCheckBox("Monday");
+        monday.setFont(new Font("Silkscreen",Font.PLAIN,18));
+        if (coffeeMachine.GetBrewDays().indexOf("Monday")>=0) {
+            monday.setSelected(true);
+        }
+        monday.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                coffeeMachine.Set(COMMAND_SET.BEAN_DAYS, "Monday");
+            }
+
+        });
+
+        JCheckBox tuesday = new JCheckBox("Tuesday");
+        tuesday.setFont(new Font("Silkscreen",Font.PLAIN,18));
+        if (coffeeMachine.GetBrewDays().indexOf("Tuesday")>=0) {
+            tuesday.setSelected(true);
+        }
+        tuesday.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                coffeeMachine.Set(COMMAND_SET.BEAN_DAYS, "Tuesday");
+            }
+
+        });
+
+        JCheckBox wednesday = new JCheckBox("Wednesday");
+        wednesday.setFont(new Font("Silkscreen",Font.PLAIN,18));
+        if (coffeeMachine.GetBrewDays().indexOf("Wednesday")>=0) {
+            wednesday.setSelected(true);
+        }
+        wednesday.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                coffeeMachine.Set(COMMAND_SET.BEAN_DAYS, "Wednesday");
+            }
+
+        });
+
+        JCheckBox thursday = new JCheckBox("Thursday");
+        thursday.setFont(new Font("Silkscreen",Font.PLAIN,18));
+        if (coffeeMachine.GetBrewDays().indexOf("Thursday")>=0) {
+            thursday.setSelected(true);
+        }
+        thursday.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                coffeeMachine.Set(COMMAND_SET.BEAN_DAYS, "Thursday");
+            }
+
+        });
+
+        JCheckBox friday = new JCheckBox("Friday");
+        friday.setFont(new Font("Silkscreen",Font.PLAIN,18));
+        if (coffeeMachine.GetBrewDays().indexOf("Friday")>=0) {
+            friday.setSelected(true);
+        }
+        friday.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                coffeeMachine.Set(COMMAND_SET.BEAN_DAYS, "Friday");
+            }
+
+        });
+
+        JCheckBox saturday = new JCheckBox("Saturday");
+        saturday.setFont(new Font("Silkscreen",Font.PLAIN,18));
+        if (coffeeMachine.GetBrewDays().indexOf("Saturday")>=0) {
+            saturday.setSelected(true);
+        }
+        saturday.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                coffeeMachine.Set(COMMAND_SET.BEAN_DAYS, "Saturday");
+            }
+
+        });
+
+        BrewDayContainer.add(days);
+        BrewDayContainer.add(sunday);
+        BrewDayContainer.add(monday);
+        BrewDayContainer.add(tuesday);
+        BrewDayContainer.add(wednesday);
+        BrewDayContainer.add(thursday);
+        BrewDayContainer.add(friday);
+        BrewDayContainer.add(saturday);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 5;
+        c.gridwidth = 1;
+        c.ipady = 15;
+        c.insets = new Insets(0,160,25,0);
+        coffeePanel.add(BrewDayContainer, c);
+
+
 
         JComboBox<String> beanTypes = new JComboBox<String>();
         beanTypes.setFont(new Font("Silkscreen",Font.PLAIN,24));
@@ -1495,8 +1652,27 @@ public class WindowManager {
         c.gridy = 5;
         c.gridwidth = 1;
         c.ipady = 15;
-        c.insets = new Insets(0,160,25,160);
+        c.insets = new Insets(0,80,25,80);
         coffeePanel.add(beanTypes, c);
+
+        JPanel remainingBrewTimeDisplay = new JPanel(new GridLayout(2,1));
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 5;
+        c.gridwidth = 1;
+        c.ipady = 30;
+        c.insets = new Insets(0,0,25,160);
+
+        JLabel remBrew = new JLabel("Remaining Brew Time");
+        remBrew.setFont(new Font("Silkscreen",Font.BOLD,20));
+        remainingBrewTimeDisplay.add(remBrew);
+
+        JTextField remaining = new JTextField("00:00:00", SwingConstants.CENTER);
+        remaining.setEditable(false);
+        remaining.setFont(new Font("Silkscreen",Font.PLAIN,24));
+        remainingBrewTimeDisplay.add(remaining);
+
+        coffeePanel.add(remainingBrewTimeDisplay, c);
 
 
 
@@ -1505,7 +1681,13 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                coffeeMachine.Check();
+
                 brewTimeDisplay.setText(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME).toString());
+                remaining.setText(coffeeMachine.Get(COMMAND_GET.BEAN_BREWTIMELEFT));
+
+                // coffeeMachine.Get(COMMAND_GET.BEAN_IS_ON);
+                System.out.println(coffeeMachine.Get(COMMAND_GET.BEAN_IS_ON));
             }
 
         } );
@@ -1562,6 +1744,9 @@ public class WindowManager {
         headPatterns.setFont(new Font("Silkscreen",Font.PLAIN,24));
         for (int i = 0;i<shower.GetPatternCount();i++) {
             headPatterns.addItem(shower.GetHeadPattern(i));
+            if (shower.Get(COMMAND_GET.SHOWER_HEADTYPE).equals(shower.GetHeadPattern(i))) {
+                headPatterns.setSelectedItem(i);
+            }
         }
 
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1576,6 +1761,10 @@ public class WindowManager {
         // start or stop the shower
         JButton startStopShower = new JButton("Start");
         startStopShower.setFont(new Font("Silkscreen",Font.PLAIN,24));
+
+        if (shower.Get(COMMAND_GET.SHOWER_STATE).equals("true")) {
+            startStopShower.setText("Stop");
+        }
 
         startStopShower.addActionListener(new ActionListener() {
 
@@ -1629,19 +1818,22 @@ public class WindowManager {
                 shower.Set(COMMAND_SET.SHOWER_TEMPERATURE,(temper.getValue().toString()));
                 temper.setValue(Double.parseDouble(shower.Get(COMMAND_GET.SHOWER_TEMPERATURE)));
 
+                shower.Set(COMMAND_SET.SHOWER_HEADTYPE, headPatterns.getSelectedItem()+"");
+
                 // animate shower
-                if (shower.Get(COMMAND_GET.SHOWER_STATE).equals("on") && (FramesPassed >= (FPS*(2.0/3.0)))) {
+                if (shower.Get(COMMAND_GET.SHOWER_STATE).equals("true") && (FramesPassed >= (FPS*(2.0/3.0))) && showerPanel.isVisible()) {
                     showerLabel.setIcon(showerOn3Png);
                 }
-                else if (shower.Get(COMMAND_GET.SHOWER_STATE).equals("on") && (FramesPassed >= (FPS*(1.0/3.0)))) {
+                else if (shower.Get(COMMAND_GET.SHOWER_STATE).equals("true") && (FramesPassed >= (FPS*(1.0/3.0))) && showerPanel.isVisible()) {
                     showerLabel.setIcon(showerOn2Png);
                 }
-                else if (shower.Get(COMMAND_GET.SHOWER_STATE).equals("on")) {
+                else if (shower.Get(COMMAND_GET.SHOWER_STATE).equals("true") && showerPanel.isVisible()) {
                     showerLabel.setIcon(showerOn1Png);
                 }
-                else {
+                else if (showerPanel.isVisible()) {
                     showerLabel.setIcon(showerPng);
                 }
+
 
             }
 
@@ -1717,7 +1909,7 @@ public class WindowManager {
         thermoPanel.add(units, c);
 
         // spinner component to allow the user to change the target temperature
-        JSpinner thermTemper = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
+        JSpinner thermTemper = new JSpinner(new SpinnerNumberModel(0.0,-20.0 ,150.0,0.1));
         thermTemper.setFont(new Font("Silkscreen",Font.PLAIN,24));
         thermTemper.setValue(thermostat.getTargetTemp());
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1730,7 +1922,7 @@ public class WindowManager {
         thermoPanel.add(thermTemper, c);
 
         // spinner component to allow user to change the humidity
-        JSpinner thermHumid = new JSpinner(new SpinnerNumberModel(0.0,-1000.0 ,1000.0,0.1));
+        JSpinner thermHumid = new JSpinner(new SpinnerNumberModel(0.0,-50 ,50.0,0.1));
         thermHumid.setFont(new Font("Silkscreen",Font.PLAIN,24));
         thermHumid.setValue(thermostat.getTargetHumid());
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -1794,6 +1986,8 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                DecimalFormat df = new DecimalFormat("#.#");
+
                 // Thermostat Stuff
                 thermostat.SetTargetTemperature((Double)thermTemper.getValue());
                 thermostat.SetTargetHumidity((Double)thermHumid.getValue());
@@ -1834,8 +2028,24 @@ public class WindowManager {
 
                 // display values
 
+                thermHumid.setValue(Double.parseDouble(df.format(thermHumid.getValue())));
+                thermTemper.setValue(Double.parseDouble(df.format(thermTemper.getValue())));
+
                 cTemp.setText(String.format("%.1f", +thermostat.getTemp()));
                 cHumid.setText(String.format("%.1f", +thermostat.getHumidity()));
+
+                if ((double)thermHumid.getValue()<(-50)) {
+                    thermHumid.setValue(-50);
+                }
+                if ((double)thermHumid.getValue()>(50)) {
+                    thermHumid.setValue(50);
+                }
+                if ((double)thermTemper.getValue()<(-20)) {
+                    thermTemper.setValue(-20);
+                }
+                if ((double)thermTemper.getValue()>(150)) {
+                    thermTemper.setValue(150);
+                }
 
 
                 // need to do actual vs set calculations here

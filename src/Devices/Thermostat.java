@@ -19,6 +19,22 @@ public class Thermostat extends Device {
         this.humidity = 20.0;
     }
 
+    public void readDataFromFile(String line) {
+
+        String[] values = line.split(",");
+        System.out.println(line);
+
+        if (values[0].equals("true")) {
+            this.celsius = true;
+        } else {this.celsius=false;}
+
+        this.temperature = Double.parseDouble(values[1]);
+        this.humidity = Double.parseDouble(values[2]);
+        this.targetTemperature = Double.parseDouble(values[3]);
+        this.targetHumidity = Double.parseDouble(values[4]);
+
+    }
+
     // parameter constructor
     public Thermostat(boolean curUnit, double targetHumid, double targetTemp) {
         // Unit by default is in celsius 
@@ -156,15 +172,20 @@ public class Thermostat extends Device {
 
         // Getting humidity    
         } else if ( param == COMMAND_GET.THERM_HUMIDITY ) {
-            return String.valueOf(humidity);
+            return String.valueOf(this.humidity);
 
         // Getting target temperature    
         } else if ( param == COMMAND_GET.THERM_TARGET_TEMP ) {
-            return String.valueOf(targetTemperature);
+            return String.valueOf(this.targetTemperature);
 
         // Getting target humidity       
         } else if ( param == COMMAND_GET.THERM_TARGET_HUMID ) {
-            return String.valueOf(targetHumidity);
+            return String.valueOf(this.targetHumidity);
+        }
+        else if ( param == COMMAND_GET.THERM_CELSIUS ) {
+            if (this.celsius) {
+                return "true";
+            } return "false";
         }
         return null;
     }

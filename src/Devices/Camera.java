@@ -58,6 +58,36 @@ public class Camera extends Device {
 
     }
 
+    public Camera() {
+
+        this.isOn=false;
+        this.allLocations = new ArrayList<>();
+        this.selectedLocation = "";
+
+    }
+
+    public void readDataFromFile(String line) {
+
+        System.out.println(line);
+
+        String[] values = line.split(",");
+
+        this.selectedLocation = values[0];
+
+        if (values[0].equals("true")) {
+            this.isOn = true;
+        } else {this.isOn=false;}
+
+        for (int i = 2;i<values.length;i++) {
+            this.allLocations.add(values[i]);
+        }
+
+    }
+
+    public ArrayList<String> GetAllLocations() {
+        return this.allLocations;
+    }
+
     // Inherited methods
     public String Check() { 
         if (this.selectedLocation==""){
@@ -73,11 +103,13 @@ public class Camera extends Device {
     
     
     // Allows activation and deactivation of camera
-    public JLabel Start() {
+    public ImageIcon Start() {
 
-        String currentLocation = this.selectedLocation;
-        JLabel currentLocationLabel = new JLabel();
+
+        ImageIcon img = new ImageIcon("Assets/Camera/" + this.selectedLocation + ".png");
+        return img;
        
+        /* 
         if (currentLocation.equalsIgnoreCase("Backyard")){
             ImageIcon backYardPng = new ImageIcon("Assets/Camera/backYard.png");
             currentLocationLabel= new JLabel(backYardPng);
@@ -117,16 +149,15 @@ public class Camera extends Device {
             //present image 
             //if fail, return BAD boolean
         }
+        */
 
-
-        return currentLocationLabel;
     }
 
     //Make this return a Jlabel, change set to somehow recognize if this worked or not.
     //Concepts of left and right camera location changing for initial implementation
-    public JLabel ChangeCamera (String location){
+    public ImageIcon ChangeCamera (String location){
 
-        JLabel tempLabel = new JLabel();
+        /* 
         
         if (location.toLowerCase()=="backyard"){//If the user presses the backyard button, move to the appropriate camera location
             this.selectedLocation=this.allLocations.get(0);   
@@ -152,8 +183,19 @@ public class Camera extends Device {
             this.selectedLocation=this.allLocations.get(4);   
             tempLabel = Start();//Change the current camera image being displayed
         }
+
+        */
+
+        ImageIcon img = new ImageIcon();
+
+        for (int i = 0;i<this.allLocations.size();i++) {
+            if (location==this.allLocations.get(i)) {
+                this.selectedLocation=this.allLocations.get(i);   
+                img = Start();
+            }
+        }
         
-        return tempLabel;
+        return img;
     }
 
     public STATES Stop() { 
@@ -194,8 +236,8 @@ public class Camera extends Device {
             }
         }
              if (param==COMMAND_SET.CAMERA_LOCATION) {
-                JLabel tempJLabel = this.ChangeCamera(value);
-                return tempJLabel.getIcon()!= null;
+                ImageIcon tempJLabel = this.ChangeCamera(value);
+                return tempJLabel != null;
         }
 
 
@@ -229,8 +271,8 @@ public class Camera extends Device {
         STATES result = STATES.GOOD;
 
         if (param == COMMAND_CALL.START){
-            JLabel tempJLabel = this.ChangeCamera(args);
-            if (tempJLabel.getIcon()== null){
+            ImageIcon tempJLabel = this.ChangeCamera(args);
+            if (tempJLabel == null){
                 result = STATES.ERROR_NO_START;
             }
         }

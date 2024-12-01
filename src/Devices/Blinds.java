@@ -78,6 +78,20 @@ public class Blinds extends Device {
         this.isOpen = status;
     }
 
+    public void readDataFromFile(String line) {
+
+        String[] values = line.split(",");
+
+        if (values[0].equals("true")) {
+            this.isOpen = true;
+        } else {this.isOpen=false;}
+
+        this.openTime = LocalTime.parse(values[1]);
+        this.closeTime = LocalTime.parse(values[2]);
+
+
+    }
+
     // Allows remote control of blinds
     public STATES Open() { 
 

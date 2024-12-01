@@ -16,13 +16,6 @@ public class Shower extends Device {
 
         // Add head patterns
         this.allHeadPatterns = new ArrayList<>();
-        this.allHeadPatterns.add("high efficiency");
-        this.allHeadPatterns.add("bubble");
-        this.allHeadPatterns.add("rain");
-        this.allHeadPatterns.add("massage");
-        this.allHeadPatterns.add("soft drench");
-        this.allHeadPatterns.add("jet");
-        this.headPattern = this.allHeadPatterns.get(0);
     }
 
     // Inherited methods
@@ -58,7 +51,6 @@ public class Shower extends Device {
         }
 
         if (10 <= temp && temp <= 30) {
-            // Increase bean count by newly inputted value
             this.temperature = temp;
             return true;
         }
@@ -97,6 +89,26 @@ public class Shower extends Device {
     public int GetPatternCount() {
         return this.allHeadPatterns.size();
     }
+
+    public void readDataFromFile(String line) {
+
+        String[] values = line.split(",");
+
+        if (values[0].equals("true")) {
+            this.isOn = true;
+        } else {this.isOn=false;}
+
+        this.headPattern = values[1];
+        this.temperature = Double.parseDouble(values[2]);
+
+        // load in all head patterns from the file 
+        this.allHeadPatterns = new ArrayList<>();
+        for (int i = 3;i<values.length;i++) {
+            this.allHeadPatterns.add(values[i]);
+        }
+
+
+    }
     
     public String Get(COMMAND_GET param) {
         // switch (param) {
@@ -113,8 +125,8 @@ public class Shower extends Device {
             return this.headPattern;
         } else if (param == COMMAND_GET.SHOWER_STATE) {
             if (isOn) {
-                return "on";
-            } return "off";
+                return "true";
+            } return "false";
         } else {
             return COMMAND_GET.UNKNOWN.toString();
         }

@@ -45,7 +45,7 @@ public class CoffeeMachine extends Device {
         this.brewTimeLeft = LocalTime.parse("00:00:00");
         this.makeDays = new boolean[7];
         for (int i = 0; i < makeDays.length; i++) {
-            makeDays[i] = true;
+            makeDays[i] = false;
         }
         
         // Setup maps
@@ -220,6 +220,7 @@ public class CoffeeMachine extends Device {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -282,6 +283,18 @@ public class CoffeeMachine extends Device {
         }
         return true;
     }
+
+    public void readDataFromFile(String line) {
+
+        String[] values = line.split("&");
+
+        this.userMakeTime = LocalTime.parse(values[5]);
+        this.brewTimeLeft = LocalTime.parse(values[2]);
+        this.selectedFlavour = values[3];
+        
+        this.Set(COMMAND_SET.BEAN_DAYS, values[6]);
+
+    }
     
     public String Get(COMMAND_GET param) {
         
@@ -307,6 +320,11 @@ public class CoffeeMachine extends Device {
             break;
         case BEAN_DAYS:
             return this.GetBrewDays();
+        case BEAN_IS_ON:
+            if (this.isOn) {
+             result = "true";}
+             result = "false";
+             break;
         default:
             result = STATES.ERROR_UNKNOWN.toString();
         }
@@ -318,7 +336,7 @@ public class CoffeeMachine extends Device {
         return this.allFlavours;
     }
 
-    private String GetBrewDays() {
+    public String GetBrewDays() {
         String[] days = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
         String toReturn = "";
         // Adds days to string based on true

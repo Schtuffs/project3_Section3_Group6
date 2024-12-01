@@ -8,6 +8,16 @@ public class SmokeDetector extends Device {
         this.isSmokey = false;
     }
 
+    public void readDataFromFile(String line) {
+
+        String[] values = line.split(",");
+
+        if (values[0].equals("true")) {
+            this.isSmokey = true;
+        } else {this.isSmokey=false;}
+
+    }
+
     // Inherited methods
     public String Check() { 
         

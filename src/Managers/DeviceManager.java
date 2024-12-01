@@ -53,8 +53,8 @@ public class DeviceManager {
 
         devices = new ArrayList<Device>();
 
-        ArrayList<String> tempDevices;
-        tempDevices = FileManager.Read(filename);
+        ArrayList<String> tempDevices = new ArrayList<>();
+        // tempDevices = FileManager.Read(filename);
 
         //Switch case wasn't working
         //could potentially do deleteCharAt(tempDevices(i).length()-1) if our devices are listed as Alarm1, Alarm2, etc. in file
