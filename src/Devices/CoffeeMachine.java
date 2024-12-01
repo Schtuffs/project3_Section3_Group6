@@ -284,14 +284,12 @@ public class CoffeeMachine extends Device {
     }
 
     public void readDataFromFile(String line) {
-
         String[] values = line.split("&");
 
-        this.userMakeTime = LocalTime.parse(values[5]);
-        this.brewTimeLeft = LocalTime.parse(values[2]);
-        this.selectedFlavour = values[3];
+        this.userMakeTime = LocalTime.parse(values[4]);
+        this.selectedFlavour = values[2];
         
-        this.Set(COMMAND_SET.BEAN_DAYS, values[6]);
+        this.Set(COMMAND_SET.BEAN_DAYS, values[5]);
 
     }
     

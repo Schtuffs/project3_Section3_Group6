@@ -90,10 +90,6 @@ public class FileManager {
                     f.write(String.valueOf(((CoffeeMachine)device).Get(COMMAND_GET.BEAN_BREWTIME)));
                     // Comma seperator for Split(",")
                     f.write("&");
-                    // Remaining Brew time
-                    f.write(String.valueOf(((CoffeeMachine)device).Get(COMMAND_GET.BEAN_BREWTIMELEFT)));
-                    // Comma seperator for Split(",")
-                    f.write("&");
                     // Bean flavour
                     f.write(String.valueOf(((CoffeeMachine)device).Get(COMMAND_GET.BEAN_FLAVOUR)));
                     // Comma seperator for Split(",")
