@@ -309,7 +309,7 @@ public class CoffeeMachine extends Device {
             result = this.brewTimes.get(this.selectedFlavour).minusNanos(this.brewTimes.get(this.selectedFlavour).getNano()).toString();
             break;
         case BEAN_BREWTIMELEFT:
-            result = this.brewTimeLeft.toString();
+            result = this.brewTimeLeft.minusNanos(this.brewTimeLeft.getNano()).toString();
             break;
         case BEAN_BREWCOST:
             result = this.beanBrewCost.get(this.selectedFlavour).toString();
