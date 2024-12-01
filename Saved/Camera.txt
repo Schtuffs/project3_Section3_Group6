@@ -1,1 +1,1 @@
-Frontyard,false,Frontdoor,Kitchen,Livingroom,Backyard,Backdoor,Frontyard,Pool
+Pool,false,Frontdoor,Kitchen,Livingroom,Backyard,Backdoor,Frontyard,Pool

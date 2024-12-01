@@ -1355,10 +1355,11 @@ public class WindowManager {
 
         c = new GridBagConstraints();
 
+        int rand = ((int) (Math.random() * 20 + 10));
+        coffeeMachine.Set(COMMAND_SET.BEAN_ADD, "" + rand);
+
         coffeePanel = new JPanel();
         coffeePanel.setLayout(new GridBagLayout());
-
-        System.out.println(LocalDate.now().getDayOfWeek());
 
         ImageIcon coffeePng = new ImageIcon("Assets/Devices/coffeeMachine.png");
         JLabel coffeeLabel = new JLabel(coffeePng);
@@ -1686,8 +1687,11 @@ public class WindowManager {
                 brewTimeDisplay.setText(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME).toString());
                 remaining.setText(coffeeMachine.Get(COMMAND_GET.BEAN_BREWTIMELEFT));
 
+                if (coffeeMachine.Get(COMMAND_GET.BEAN_BREWTIMELEFT).charAt(0)=='2') {
+                    remaining.setText("00:00:00");
+                }
+
                 // coffeeMachine.Get(COMMAND_GET.BEAN_IS_ON);
-                System.out.println(coffeeMachine.Get(COMMAND_GET.BEAN_IS_ON));
             }
 
         } );

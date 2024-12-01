@@ -307,7 +307,7 @@ public class CoffeeMachine extends Device {
             result = this.beansRemaining.get(this.selectedFlavour).toString();
             break;
         case BEAN_BREWTIME:
-            result = this.brewTimes.get(this.selectedFlavour).toString();
+            result = this.brewTimes.get(this.selectedFlavour).minusNanos(this.brewTimes.get(this.selectedFlavour).getNano()).toString();
             break;
         case BEAN_BREWTIMELEFT:
             result = this.brewTimeLeft.toString();
