@@ -1,7 +1,6 @@
 package Main;
 
 import javax.swing.UnsupportedLookAndFeelException;
-
 import Managers.*;
 
 public class Main {

@@ -114,21 +114,20 @@ public class CoffeeMachine extends Device {
         // Check make time to current time and that machine is not already on
         if (current.equals(this.actualMakeTime) && !this.isOn) {
             // If not on, turn on
-            if (!this.isOn) {
-                return this.Start().toString();
-            }
-            
+            return this.Start().toString();
         }
         // Otherwise, check for decreasing brewing time or stopping machine
         else {
             // Machine must be on to reduce time
             if (this.isOn) {
                 // Reduce time based on how much has passed since last check
+                current = LocalTime.now();
                 this.brewTimeLeft = this.brewTimeLeft.minusNanos(NANOS.between(this.timeOfLastCheck, current));
                 this.timeOfLastCheck = current;
 
                 // Finally, check if runtime is done by checking if the hour wrapped around
                 if (this.brewTimeLeft.getHour() == 23) {
+                    this.brewTimeLeft = LocalTime.parse("00:00");
                     return this.Stop().toString();
                 }
             }
@@ -167,7 +166,7 @@ public class CoffeeMachine extends Device {
                     }
                 }
                 
-                if (inTime[0]  && inTime[1] && inTime[2]) {
+                if (inTime[0] && inTime[1] && inTime[2]) {
                     // Machine should be running but it is not
                     return STATES.ERROR_NO_START.toString();
                 }
