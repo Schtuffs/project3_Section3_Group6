@@ -82,7 +82,7 @@ public class WindowManager {
 
         
         this.width = 1600;
-        this.height = 900;
+        this.height = 900; 
         this.min_size = new Dimension(1200,600);
         this.screen = SCREENS.SCREEN_MAIN;
         this.window = new JFrame();
@@ -445,6 +445,7 @@ public class WindowManager {
 
                 if (!alarm.GetIsBeeping() || !alarmPanel.isVisible()) {
                     BeepSeconds = 0;
+                    alarmLabel.setIcon(alarmOffPng);
                 }
 
                 // Check alarm if it should beep
@@ -452,7 +453,7 @@ public class WindowManager {
                     alarmLabel.setIcon(alarmOnPng);
                     BeepSeconds = 0;
                 }
-                else if (FramesPassed==((int)(FPS/4)) && BeepSeconds==0 && alarmPanel.isVisible()) {
+                else if ((FramesPassed==((int)(FPS/4)) && BeepSeconds==0 && alarmPanel.isVisible()) || alarm.GetIsBeeping()==false) {
                     alarmLabel.setIcon(alarmOffPng);
                 }
             }
@@ -1272,6 +1273,17 @@ public class WindowManager {
         JButton dismiss = new JButton("Dismiss");
         dismiss.setFont(new Font("Silkscreen",Font.PLAIN,24));
 
+        dismiss.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sensor.SetIsDismissed(true);
+                
+            }
+            
+        });
+
         // only display when it has triggered an alarm
         dismiss.setVisible(false);
         c.insets = new Insets(50,200,0,200);
@@ -1290,9 +1302,16 @@ public class WindowManager {
             public void actionPerformed(ActionEvent e) {         
 
                 // Sensor stuff
-                sensor.MonitorDevice(blinds);
+                if (sensor.MonitorDevice(blinds)) {
+                    // dismiss.setVisible(true);
+                }
                 s_openTimeDisplay.setText(sensor.GetOpenTime().toString());
                 s_closeTimeDisplay.setText(sensor.GetCloseTime().toString());
+
+                if (alarm.GetIsBeeping()==false) {
+                    dismiss.setVisible(false);
+                    sensor.SetIsDismissed(false);
+                }
 
 
             }
@@ -1362,6 +1381,9 @@ public class WindowManager {
         coffeePanel.setLayout(new GridBagLayout());
 
         ImageIcon coffeePng = new ImageIcon("Assets/Devices/coffeeMachine.png");
+        ImageIcon coffeePng1 = new ImageIcon("Assets/Devices/CoffeeMachine1.png");
+        ImageIcon coffeePng2 = new ImageIcon("Assets/Devices/CoffeeMachine2.png");
+        ImageIcon coffeePng3 = new ImageIcon("Assets/Devices/CoffeeMachine3.png");
         JLabel coffeeLabel = new JLabel(coffeePng);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -1682,7 +1704,9 @@ public class WindowManager {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                coffeeMachine.Check();
+                if (coffeeMachine.GetBrewDays().toLowerCase().indexOf(LocalDate.now().getDayOfWeek().toString().toLowerCase())>=0) {
+                    coffeeMachine.Check();
+                }
 
                 brewTimeDisplay.setText(coffeeMachine.Get(COMMAND_GET.BEAN_MAKETIME).toString());
                 remaining.setText(coffeeMachine.Get(COMMAND_GET.BEAN_BREWTIMELEFT));
@@ -1690,8 +1714,18 @@ public class WindowManager {
                 if (coffeeMachine.Get(COMMAND_GET.BEAN_BREWTIMELEFT).charAt(0)=='2') {
                     remaining.setText("00:00:00");
                 }
-
-                // coffeeMachine.Get(COMMAND_GET.BEAN_IS_ON);
+                if (coffeeMachine.GetIsOn() && (FramesPassed >= (FPS*(2.0/3.0))) && coffeePanel.isVisible()) {
+                    coffeeLabel.setIcon(coffeePng1);
+                }
+                else if (coffeeMachine.GetIsOn() && (FramesPassed >= (FPS*(1.0/3.0))) && coffeePanel.isVisible()) {
+                    coffeeLabel.setIcon(coffeePng2);
+                }
+                else if (coffeeMachine.GetIsOn() && coffeePanel.isVisible()) {
+                    coffeeLabel.setIcon(coffeePng3);
+                }
+                else if (coffeePanel.isVisible()) {
+                    coffeeLabel.setIcon(coffeePng);
+                }
             }
 
         } );

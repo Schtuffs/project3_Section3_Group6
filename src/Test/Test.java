@@ -116,7 +116,7 @@ public class Test {
             Alarm alarm = new Alarm();
 
             // Act, get actual and expected
-            alarm.readDataFromFile("1,2");
+            alarm.readDataFromFile("true,2");
             boolean actual = alarm.GetIsBeeping();
             boolean expected = true;
 
@@ -131,7 +131,7 @@ public class Test {
             Alarm alarm = new Alarm();
 
             // Act, get actual and expected
-            alarm.readDataFromFile("1,2");
+            alarm.readDataFromFile("true,2");
             int actual = alarm.GetBeepDelay();
             int expected = 2;
 
@@ -146,7 +146,7 @@ public class Test {
             Alarm alarm = new Alarm();
 
             // Act, get actual and expected
-            boolean actual = alarm.readDataFromFile("1,2,3");
+            boolean actual = alarm.readDataFromFile("true,2,3");
             boolean expected = false;
 
             // Assert
@@ -174,7 +174,7 @@ public class Test {
             Alarm alarm = new Alarm();
 
             // Act, get actual and expected
-            boolean actual = alarm.readDataFromFile("1,-1");
+            boolean actual = alarm.readDataFromFile("true,-1");
             boolean expected = false;
 
             // Assert
@@ -266,21 +266,6 @@ public class Test {
             Assert.AreEqual(actual, expected);
         }
 
-        /* STATES no public cannot test 
-        // 15
-        // TEST_UNIT_ALARM_11 p1
-        {
-            // Arrange
-            Alarm alarm = new Alarm();
-
-            // Act, get actual and expected
-            STATES actual = alarm.Check();
-
-            // Assert
-            Assert.AreEqual(actual, expected);
-        }
-            */
-
 
         // Alarm Integration tests 
 
@@ -295,15 +280,9 @@ public class Test {
         }
 
         // Waiting for WindowManager implementation
-        /* 
         // TEST_INTEGRATION_ALARM_02
-        {
-            // Arrange
-            Alarm alarm = new Alarm();
-            alarm.TriggerAlarm("Test Alert");
+        // This will be tested in main as it requires the WindowManager, AKA main program
 
-        }
-            */
 
         // TEST_INTEGRATION_ALARM_03
         {
@@ -602,7 +581,7 @@ public class Test {
 
             // set vals
             sensor.SetOpenTime(ot);
-            sensor.SetOpenTime(ct);
+            sensor.SetCloseTime(ct);
             sensor.SetIsDismissed(true);
             sensor.SetIsOpen(true);
 
@@ -626,7 +605,7 @@ public class Test {
             Sensor sensor = new Sensor();
 
             // set vals
-            boolean actual = sensor.readDataFromFile("04:00:00,19:00:00,1,1");
+            boolean actual = sensor.readDataFromFile("true,true,04:00:00,19:00:00");
 
             // Get Vals
             if (!sensor.GetOpenTime().equals(ot)) {actual=false;}
@@ -742,63 +721,37 @@ public class Test {
             // Assert
             Assert.IsFalse(actual);
         }
-
-        /* STATES is private cannot be tested
-        // 14
-        // TEST_UNIT_SENSOR_10
-        {
-            // Arrange
-            LocalTime time = LocalTime.parse("00:00:00");
-            Sensor sensor = new Sensor();
-
-            // set vals
-            boolean actual = sensor.Check().equals(STATES.GOOD);
-            sensor.SetOpenTime(time);
-            sensor.SetCloseTime(time);
-
-
-            // Get Vals
-            if (!sensor.Check().equals(STATES.ERROR_INVALID_TIME)) {actual=false;}
-
-            // Assert
-            Assert.IsTrue(actual);
-        }
-            */
         
 
 
         // 15
-        /* Awaiting Implementation 
         // #
         // TEST_INTEGRATION_SENSOR_01
         {
 
             // Arrange
-            Sensor sensor = new Sensor();
-            Blinds blinds = new Blinds();
+            Blinds blinds = new Blinds(LocalTime.parse("12:00:00"), LocalTime.parse("19:00:00"));
+            blinds.setOpenStatus(true);
+            Alarm alarm = new Alarm();
+            Sensor sensor = new Sensor(false, false, LocalTime.parse("12:00:00"), LocalTime.now(), alarm);
+            sensor.MonitorDevice(blinds);
+
         }
 
         // 16
         // TEST_INTEGRATION_SENSOR_02
-        {
+        // This will be tested in main manually as it requires WindowManager which is main 
 
-            // Arrange
-            Sensor sensor = new Sensor();
-        }
-
-
-        
-        */
         // 17
         // TEST_INTEGRATION_SENSOR_03
         {
 
             // Arrange
-            Sensor sensor = new Sensor();
             Alarm alarm = new Alarm();
+            Sensor sensor = new Sensor(false, false, LocalTime.now(), LocalTime.now(), alarm);
             alarm.SetIsBeeping(true);
             sensor.SetIsDismissed(true);
-            Assert.IsTrue(alarm.Beep());
+            Assert.IsFalse(alarm.Beep());
         }
 
     }
@@ -1038,10 +991,13 @@ public class Test {
         // TEST_UNIT_ALERTMANAGER_05
         {
             // Arrange
-            AlertManager am = new AlertManager();
+            Alarm alarm = new Alarm();
+            AlertManager am = new AlertManager("Sleep", alarm);
 
             // set vals
             Thread.sleep(2000);
+
+            // Assert
             am.CloseWindow();
         }
 
@@ -1057,7 +1013,7 @@ public class Test {
 
             // Get Vals
             if (!(am.GetAlarm().equals(alarm))) {actual=false;}
-            else if (!am.GetAlert().equals("Test Alert")) {actual=false;}
+            else if (!am.GetAlert().equals("Alarm Triggered")) {actual=false;}
 
             // Assert
             Assert.IsTrue(actual);
@@ -1077,7 +1033,7 @@ public class Test {
 
             // Get Vals
             if (!(am.GetAlarm().equals(alarm))) {actual=false;}
-            else if (!am.GetAlert().equals("An error has occured")) {actual=false;}
+            else if (!am.GetAlert().equals("Test Alert")) {actual=false;}
 
             // Assert
             Assert.IsTrue(actual);
@@ -1095,14 +1051,10 @@ public class Test {
             // View variables on the pop-up window
         }
 
-        /* awaiting window manager
-        // 1
+
         // TEST_INTEGRATION_ALERTMANAGER_02
-        {
-            // Arrange
-            Alarm alarm = new Alarm();
-        }
-            */
+        // Will be tested in main as WindowManager is required which is the main program
+
 
         
 

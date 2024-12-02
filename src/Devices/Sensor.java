@@ -125,15 +125,17 @@ public class Sensor extends Device {
             LocalTime.now().getSecond()==this.openTime.getSecond() && 
             blinds.getOpenStatus()==false) {//CHANGED THIS
             alarm.TriggerAlarm("Blinds are not open!", this);
+            return false;
         }
         else if (LocalTime.now().getHour()==this.closeTime.getHour() && 
                  LocalTime.now().getMinute()==this.closeTime.getMinute() && 
                  LocalTime.now().getSecond()==this.closeTime.getSecond() && 
                  blinds.getOpenStatus()) {//CHANGED THIS!!!
             alarm.TriggerAlarm("Blinds are not closed!", this);
+            return false;
         }
 
-        return false;
+        return true;
     }
 
 
@@ -157,6 +159,10 @@ public class Sensor extends Device {
      }
      public void SetIsDismissed(boolean isDismissed) {
         this.isDismissed = isDismissed;
+        if (isDismissed==true && this.alarm!=null) {
+            this.alarm.SetIsBeeping(false);
+        }
+        
     }
     public void SetOpenTime(LocalTime openTime) {
         this.openTime = openTime;

@@ -49,7 +49,7 @@ public class AlertManager extends JFrame implements ActionListener {
         this.okButton.addActionListener(this);
         this.okButton.setVisible(true);
 
-        this.warningLabel = new JLabel("<html><p style=\"width:250px\">"+alert+"</p></html>", SwingConstants.CENTER);
+        this.warningLabel = new JLabel("<html><p style=\"width:190px\">"+alert+"</p></html>", SwingConstants.CENTER);
         this.warningLabel.setVisible(true);
 
         ImageIcon img = new ImageIcon(ICON_PATH);

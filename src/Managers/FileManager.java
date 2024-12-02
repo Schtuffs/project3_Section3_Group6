@@ -151,7 +151,7 @@ public class FileManager {
                     break;
                 case "Sensor":
                     // isOpen
-                    f.write(String.valueOf(((Sensor)device).Get(COMMAND_GET.SENSOR_IS_DISMISSED)));
+                    f.write(String.valueOf(((Sensor)device).Get(COMMAND_GET.SENSOR_IS_OPEN)));
                     // Comma seperator for Split(",")
                     f.write(",");
                     // isDismissed

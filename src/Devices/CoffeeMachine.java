@@ -106,6 +106,10 @@ public class CoffeeMachine extends Device {
         this.actualMakeTime = makeTime.minusSeconds(this.brewTimes.get(this.selectedFlavour).getSecond());
     }
 
+    public boolean GetIsOn() {
+        return this.isOn;
+    }
+
     // Inherited methods
     public String Check() {
         // Check if coffee machine should start
