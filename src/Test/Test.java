@@ -6,6 +6,7 @@ import Devices.*;
 import Managers.*;
 import Devices.Device.COMMAND_GET;
 import Devices.Device.COMMAND_SET;
+import Devices.Device.STATES;
 import Devices.Device.COMMAND_CALL;
 
 public class Test {
@@ -318,19 +319,112 @@ public class Test {
 
         }
         
-
-        
     }
 
     private static void TestBlinds() {
         
+        //Testing if the blinds constructor works whit null time inputs
+        {
+            Blinds blinds = new Blinds(null, null);
+            Assert.AreEqual(blinds.Check(), "GOOD");
+        }
+
+        //Testing if the blinds constructor works with parameters
+        {
+            String tOTime = "06:00:00";
+            String tCTime = "18:00:00";
+            LocalTime oTime = LocalTime.parse(tOTime);
+            LocalTime cTime = LocalTime.parse(tCTime);
+            Blinds blinds = new Blinds(oTime, cTime);
+            Assert.AreEqual(blinds.Check(), "GOOD");
+        }
+
+        //Testing if opening the blinds works and maintains a GOOD state
+        {
+            Blinds blinds = new Blinds(null, null);
+            blinds.Open();
+            Assert.AreEqual(blinds.Check(), "GOOD");
+        }
+
+        //Testing if closing the blinds works and maintains a GOOD state
+        {
+            Blinds blinds = new Blinds(null, null);
+            blinds.Close();
+            Assert.AreEqual(blinds.Check(), "GOOD");
+        }
+
+        //Testing if setting the Open Time function works
+        {
+            String oTime = "08:00:00";
+            Blinds blinds = new Blinds(null, null);
+            boolean result = blinds.setOpenTime(oTime);
+            Assert.AreEqual(result, true);
+        }
+
+         //Testing if setting the Close Time function works
+         {
+            String cTime = "20:00:00";
+            Blinds blinds = new Blinds(null, null);
+            boolean result = blinds.setCloseTime(cTime);
+            Assert.AreEqual(result, true);
+        }
+
+          //Testing if the blinds Check() function returns correct state when blinds are closed
+          {
+            String result;
+            Blinds blinds = new Blinds(null, null);
+            result = blinds.Check();
+            Assert.AreEqual(result, "GOOD");
+        }
+
+
     }
 
     private static void TestCamera() {
-        //What
-        //The
-        //Frick
-        //Frack
+
+        //Testing constructor creates good object
+        {
+            Camera camera = new Camera();
+            Assert.AreEqual(camera.Check(), "GOOD");
+        }
+
+        //Testing constructor creates good object
+        {
+            String locations[] = new String[5];
+            String allLocations[] = new String[5];
+            Camera camera = new Camera(locations, allLocations);
+            Assert.AreEqual(camera.Check(), "GOOD");
+        }
+
+        //Testing if camera can change locations and maintain a working state
+        { 
+           Camera camera = new Camera();
+           camera.ChangeCamera("FrontDoor");
+           Assert.AreEqual(camera.Check(), "GOOD");
+        }
+
+        //Testing that camera can stop running (set isOn=false) and maintain a functioning state
+        { 
+           Camera camera = new Camera();
+           camera.Stop();
+           Assert.AreEqual(camera.Check(), "GOOD");
+        }
+
+        //Testing that camera can start running (set isOn=true) and maintain a functioning state
+        { 
+            Camera camera = new Camera();
+            camera.Start();
+            Assert.AreEqual(camera.Check(), "GOOD");
+        }
+
+        //Testing that camera check() function works 
+        { 
+            String states;
+            Camera camera = new Camera();
+            states = camera.Check();
+            Assert.AreEqual(states, "GOOD");
+        }
+
     }
 
     private static void TestCoffeeMachine() {
