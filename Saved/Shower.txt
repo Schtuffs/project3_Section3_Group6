@@ -1,1 +1,1 @@
-false,high efficiency,17.0,high efficiency,bubble,rain,massage,soft drench,jet
+true,high efficiency,17.0,high efficiency,bubble,rain,massage,soft drench,jet

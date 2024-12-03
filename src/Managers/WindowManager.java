@@ -414,6 +414,7 @@ public class WindowManager {
 
                 alarm.StopAlarm();
                 alarmLabel.setIcon(alarmOffPng);
+                smokey.SetIsSmokey(false);
                 
             }
             
@@ -1335,8 +1336,9 @@ public class WindowManager {
         
         /// Simply show the smoke detector since it is uninteractable 
         // Sample picture to display the smokey detector 
-        ImageIcon smokePng = new ImageIcon("Assets/Devices/smokeDetector.png");
-        JLabel smokeLabel = new JLabel(smokePng);
+        ImageIcon smokePngOn = new ImageIcon("Assets/Devices/SmokeyYes.png");
+        ImageIcon smokePngOff = new ImageIcon("Assets/Devices/SmokeyNo.png");
+        JLabel smokeLabel = new JLabel(smokePngOff);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
@@ -1356,11 +1358,15 @@ public class WindowManager {
                 if (rand==1) {
                     smokey.SetIsSmokey(true);
                 } 
-                else {smokey.SetIsSmokey(false); }
-
                 if (smokey.GetIsSmokey()) {
                     alarm.TriggerAlarm("Theres a fire in the house!",smokey);
+                    smokeLabel.setIcon(smokePngOn);
                 }
+                else {
+                    smokeLabel.setIcon(smokePngOff);
+                }
+
+
 
             }
 
